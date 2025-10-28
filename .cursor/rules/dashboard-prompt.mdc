@@ -1,0 +1,240 @@
+Developer: ---
+alwaysApply: true
+---
+
+Begin with a concise checklist (3-7 bullets) of what you will do; keep items conceptual, not implementation-level.
+
+Design and implement a production-ready Smart Attendance System web dashboard for Teachers and Admins using React 18, Vite, and Tailwind CSS. The dashboard must be modular, follow React best practices, and feature robust error handling, loading states, and responsive design.
+
+After each tool call or code edit, validate result in 1–2 lines and proceed or self-correct if validation fails.
+
+# Tech Stack
+- React 18, Vite, React Router v6
+- Tailwind CSS 3 with a custom design system
+- Axios for API calls
+- React Hook Form with Zod validation
+- Lucide React for icons
+- Recharts for charts
+- React Leaflet for maps
+- React Hot Toast for notifications
+- date-fns for date management
+
+# Design System
+Use these Tailwind color tokens:
+- Primary: blue (50: #f0f9ff to 900: #0c4a6e, main: #0284c7)
+- Success: green (#10b981)
+- Warning: amber (#f59e0b)
+- Error: red (#ef4444)
+- Info: blue (#3b82f6)
+- Neutral grays for backgrounds and text
+
+Design principles:
+- Clean, minimal UI with subtle shadows
+- Use `rounded-md` for buttons/inputs, `rounded-lg` for cards
+- Consistent spacing (4px base)
+- Mobile-first responsive layout
+- Smooth 200ms transitions
+- Full dark mode support
+
+# Backend API (FastAPI - already established)
+Base URL: `http://localhost:8000/api/v1`
+
+Endpoints:
+- Auth: `POST /auth/login`, `/auth/refresh`, `/auth/logout`
+- Users: `GET/POST/PUT/DELETE /users`, `/users/{id}`
+- Subjects: `GET/POST/PUT/DELETE /subjects`, `/subjects/{id}`
+- Sessions: `GET/POST/PUT/DELETE /sessions`, `/sessions/{id}`
+- Attendance: `GET /attendance`, `/attendance/session/{id}`, `/attendance/student/{id}`, `POST /attendance/manual`, `GET /attendance/flagged`, `PUT /attendance/{id}/review`
+- Geofence: `GET/POST/PUT/DELETE /geofence`, `/geofence/{id}`
+- Reports: `GET /reports/attendance`, `/reports/subject/{id}`, `/reports/student/{id}`, `/reports/export`
+- Dashboard: `GET /dashboard/teacher/{id}`, `/dashboard/admin`
+- Audit: `GET /audit/logs`
+
+Response format:
+```json
+{
+  "status": "success" | "error",
+  "data": {...},
+  "message": "..."
+}
+```
+
+# Project Structure
+```
+src/
+├── components/common/        # Button, Card, Input, Select, Badge, Modal, Table, Loader
+├── components/layout/        # Sidebar, Header, Layout, ProtectedRoute
+├── components/features/      # dashboard, sessions, attendance, users, reports
+├── pages/auth/               # Login
+├── pages/teacher/            # TeacherDashboard, Sessions, SessionDetails, FlaggedReview, ManualAttendance, AttendanceHistory, Reports
+├── pages/admin/              # AdminDashboard, UserManagement, SubjectManagement, SessionManagement, GeofenceManagement, AttendanceOversight, Reports, SystemConfig, AuditLogs
+├── context/                  # AuthContext, ThemeContext
+├── services/                 # api.js, authService, userService, sessionService, attendanceService, subjectService, geofenceService, reportService
+├── utils/                    # constants, helpers, validators
+├── hooks/                    # useAuth, useFetch, useDebounce
+├── App.jsx, main.jsx, index.css
+```
+
+# TEACHER FEATURES
+1. **Login Page**
+    - Centered login form (email, password, 'Remember me')
+    - Error handling and dashboard redirect on success
+2. **Teacher Dashboard**
+    - Sidebar + Header + Main Content layout
+    - 4 Stats Cards: Today's Sessions, Present Today (%), Flagged Records, Avg Attendance (trend)
+    - Quick action buttons: Start Session, Review Flagged (with badge), Manual Attendance
+    - Today's Schedule: Table (Time, Subject, Room, Status)
+    - Clickable for session details
+    - Recent Activity: Last 10 attendance submissions
+3. **Sessions Page**
+    - List view with subject, date range, and status filters
+    - Subject search
+    - Table: Date, Time, Subject, Present/Total, Flagged, Actions
+    - Actions: View Details, Export
+    - Pagination (20/page)
+4. **Session Details Page**
+    - Session Info, Attendance stats
+    - Student List Table: Name, Photo, Status, AI Scores, Geofence, Time, View/Manual Override
+    - Filter by status, search name
+5. **Flagged Review Page**
+    - Table of flagged records with filters (date, subject, reason)
+    - Photo, session, flagged reason, AI scores, clickable images
+    - Actions: Approve/Reject, Modal, Bulk actions
+6. **Manual Attendance Page**
+    - Dropdowns: subject, session
+    - Checkbox/select list of students, search/filter, bulk select
+    - Optional comment, submit with confirmation
+7. **Attendance History Page**
+    - Tabs: Student-wise, Session-wise
+    - Student-wise: Select student, view records
+    - Session-wise: Filter by date, view sessions
+    - Charts (trends), Export CSV/PDF
+8. **Reports Page**
+    - Select report type (Subject/Student/Custom), date range, filters
+    - Generate, preview modal, export PDF/CSV
+
+# ADMIN FEATURES
+1. **Admin Dashboard**
+    - 6 System Statistic Cards
+    - Quick Actions: Add User, Create Subject, Create Session, View Audit Logs
+    - Charts: 30-day Attendance trend, Department-wise breakdown
+    - Recent Activity Feed
+2. **User Management**
+    - Tabs (Students/Teachers/Admins), filter/search
+    - Table: Name, Email, ID, Dept, Status, Last Login, Actions (View/Edit/Delete/Reset/Import)
+    - Add/Edit modal with profile photo upload, per-role fields, validation
+3. **Subject Management**
+    - Table with search/filter
+    - Add/Edit Modal: assign teacher, department, geofence, enroll students (multi-select/CSV)
+4. **Session Management**
+    - Calendar/List toggle, filter
+    - Create modal with subject, date/time, geofence, recurring
+5. **Geofence Management**
+    - List and map view (Leaflet)
+    - Create/Edit Modal: Interactive map, radius slider
+6. **Attendance Oversight**
+    - Institution-wide table
+    - Filters, export, review flagged (all teachers), admin manual override
+7. **Reports Page**
+    - Types: overall, department, subject, teacher, student, flagged, geofence compliance
+    - Date/filters, preview, export, schedule
+8. **System Configuration**
+    - Tabs: General/Attendance/Security/Notification Settings
+    - Forms: Institution details, AI thresholds, security, SMTP, etc.
+9. **Audit Logs**
+    - Table: Timestamp, User, Action, Entity, Details, IP; search/filter, export, pagination
+
+# Component Guidelines
+- **Button:** `<Button variant="primary|secondary|success|error|outline" size="sm|md|lg">Text</Button>`
+- **Card:** `<Card><CardHeader/><CardBody/><CardFooter/></Card>`
+- **Table:** `<Table columns={} data={} loading={} onRowClick={} pagination={true} />`
+- **Modal:** `<Modal isOpen={} onClose={} title="">Content</Modal>`
+- **Badge:** `<Badge variant="success|warning|error|info">Text</Badge>`
+- **Sidebar:** Logo, icon links (lucide-react), active state, collapsible (mobile), profile bottom
+- **Header:** Page title, optional search, notification badge/icon, user dropdown (profile/settings/logout)
+- **Layout:** Sidebar + Header, responsive/hamburger for mobile, main padded area
+
+# Authentication
+- **AuthContext:** Stores user info, role, JWT, login/logout/refresh handlers, auth/role checks
+- **ProtectedRoute:** Guards routes, role checks, redirects unauthenticated users
+
+# API Service Layer
+- **api.js:** Axios base URL (env), request interceptor inserts JWT, response handles 401/refresh
+- **Services:** CRUD exports per resource, e.g., `getAllUsers = () => api.get('/users')`
+
+# State Management
+- AuthContext for app auth
+- ThemeContext for dark mode
+- `useState` for local UI
+- Custom `useFetch` hook:
+```js
+const useFetch = (serviceFunction, params) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // fetch logic
+  return { data, loading, error };
+};
+```
+
+# Forms
+Use React Hook Form + Zod:
+```js
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+const { register, handleSubmit, formState: { errors } } = useForm({
+  resolver: zodResolver(schema),
+});
+```
+
+# Charts
+- Recharts (Line, Bar, Pie)
+
+# Notifications
+- React Hot Toast:
+```js
+toast.success('Success message');
+toast.error('Error message');
+toast.loading('Loading...');
+```
+
+# Error Handling
+- Display user-friendly errors
+- Graceful failover on API issues
+- Fallback UI
+- Log to console
+
+# Loading States
+- Use skeletons for tables/cards
+- Button spinners
+- Loading overlay for full-page actions
+
+# Responsive Design
+- Mobile-first, breakpoints: sm(640), md(768), lg(1024), xl(1280)
+- Sidebar hamburger on mobile
+- Horizontally scrollable tables, vertical stacking for cards on mobile
+
+# Dark Mode
+- Toggle in header/settings
+- Tailwind `dark:` variants
+- Persist preference in localStorage
+
+# Accessibility
+- Semantic HTML and ARIA labels
+- Keyboard navigation & focus management
+- Proper alt text for images
+
+# Performance
+- Use React.lazy/code splitting
+- Apply useMemo for heavy computation
+- Debounce search inputs
+- Paginate large tables
+- Lazy-load images
+
+Set reasoning_effort = medium to match the complexity of the requested dashboard; keep tool call outputs terse and final user-facing outputs more detailed.
+
+---
+
+Prioritize teacher features, then admin features. Deliver a fully complete, production-quality dashboard following all outlined requirements.
