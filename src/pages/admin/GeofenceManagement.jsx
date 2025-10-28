@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, MapPin, Navigation, Circle } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
@@ -6,38 +7,15 @@ import Table from '../../components/common/Table';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Badge from '../../components/common/Badge';
-import Modal, { ModalFooter } from '../../components/common/Modal';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import adminService from '../../services/adminService';
 import { formatDate } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 
-const geofenceSchema = z.object({
-  name: z.string().min(1, 'Zone name is required'),
-  description: z.string().optional(),
-  center_latitude: z.number().min(-90).max(90, 'Invalid latitude'),
-  center_longitude: z.number().min(-180).max(180, 'Invalid longitude'),
-  radius_meters: z.number().min(1, 'Radius must be at least 1 meter'),
-  is_active: z.boolean().optional(),
-});
-
 const GeofenceManagement = () => {
+  const navigate = useNavigate();
   const [zones, setZones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingZone, setEditingZone] = useState(null);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(geofenceSchema),
-  });
 
   useEffect(() => {
     fetchZones();
@@ -53,40 +31,6 @@ const GeofenceManagement = () => {
       console.error('Zones error:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleOpenModal = (zone = null) => {
-    setEditingZone(zone);
-    if (zone) {
-      reset(zone);
-    } else {
-      reset({
-        name: '',
-        description: '',
-        center_latitude: 0,
-        center_longitude: 0,
-        radius_meters: 50,
-        is_active: true,
-      });
-    }
-    setShowModal(true);
-  };
-
-  const onSubmit = async (data) => {
-    try {
-      if (editingZone) {
-        await adminService.updateGeofenceZone(editingZone.id, data);
-        toast.success('Geofence zone updated successfully');
-      } else {
-        await adminService.createGeofenceZone(data);
-        toast.success('Geofence zone created successfully');
-      }
-      setShowModal(false);
-      fetchZones();
-    } catch (error) {
-      toast.error(`Failed to ${editingZone ? 'update' : 'create'} geofence zone`);
-      console.error('Zone save error:', error);
     }
   };
 
@@ -113,8 +57,8 @@ const GeofenceManagement = () => {
       key: 'name',
       header: 'Zone',
       render: (value, row) => (
-        <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 bg-purple-50 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
             <MapPin className="h-5 w-5 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
@@ -128,11 +72,9 @@ const GeofenceManagement = () => {
       key: 'location',
       header: 'Location',
       render: (value, row) => (
-        <div className="text-sm">
-          <div className="flex items-center space-x-1">
-            <Navigation className="h-4 w-4 text-gray-400" />
-            <span>{row.center_latitude?.toFixed(6)}, {row.center_longitude?.toFixed(6)}</span>
-          </div>
+        <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <Navigation className="h-4 w-4 text-gray-400" />
+          <span>{row.center_latitude?.toFixed(6)}, {row.center_longitude?.toFixed(6)}</span>
         </div>
       ),
     },
@@ -140,7 +82,7 @@ const GeofenceManagement = () => {
       key: 'radius',
       header: 'Radius',
       render: (value, row) => (
-        <div className="flex items-center space-x-1 text-sm">
+        <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <Circle className="h-4 w-4 text-gray-400" />
           <span>{row.radius_meters}m</span>
         </div>
@@ -158,32 +100,37 @@ const GeofenceManagement = () => {
     {
       key: 'created_at',
       header: 'Created',
-      render: (value) => formatDate(value, 'MMM dd, yyyy'),
+      render: (value) => (
+        <span className="text-sm text-gray-700 dark:text-gray-300">
+          {formatDate(value, 'MMM dd, yyyy')}
+        </span>
+      ),
     },
     {
       key: 'actions',
       header: 'Actions',
       render: (_, row) => (
-        <div className="flex space-x-2">
+        <div className="flex gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             icon={Edit}
             onClick={(e) => {
               e.stopPropagation();
-              handleOpenModal(row);
+              navigate(`/admin/geofence/edit/${row.id}`);
             }}
           >
             Edit
           </Button>
           <Button
-            variant="error"
+            variant="ghost"
             size="sm"
             icon={Trash2}
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(row.id);
             }}
+            className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
           >
             Delete
           </Button>
@@ -195,28 +142,41 @@ const GeofenceManagement = () => {
   return (
     <Layout title="Geofence Management">
       <div className="space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Geofence Zones</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Manage location-based zones for attendance tracking
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            icon={Plus}
+            onClick={() => navigate('/admin/geofence/add')}
+          >
+            Add Zone
+          </Button>
+        </div>
+
+        {/* Main Content */}
         <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-              <CardTitle>Geofence Zones</CardTitle>
-              <Button
-                variant="primary"
-                icon={Plus}
-                onClick={() => handleOpenModal()}
-              >
-                Add Zone
-              </Button>
-            </div>
-          </CardHeader>
           <CardBody>
             {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+            <div className="mb-6">
               <Input
-                placeholder="Search geofence zones..."
+                placeholder="Search by zone name or description..."
                 icon={Search}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
+            </div>
+
+            {/* Results Summary */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Showing {filteredZones.length} of {zones.length} zones
+              </p>
             </div>
 
             {/* Zones Table */}
@@ -228,98 +188,9 @@ const GeofenceManagement = () => {
             />
           </CardBody>
         </Card>
-
-        {/* Add/Edit Zone Modal */}
-        <Modal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          title={editingZone ? 'Edit Geofence Zone' : 'Add New Geofence Zone'}
-          size="lg"
-        >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <Input
-                label="Zone Name"
-                placeholder="Main Campus Building A"
-                error={errors.name?.message}
-                fullWidth
-                {...register('name')}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              <Input
-                label="Description"
-                placeholder="Main campus building A classroom area"
-                error={errors.description?.message}
-                fullWidth
-                {...register('description')}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Center Latitude"
-                type="number"
-                step="0.000001"
-                placeholder="40.7128"
-                error={errors.center_latitude?.message}
-                fullWidth
-                {...register('center_latitude', { valueAsNumber: true })}
-              />
-              <Input
-                label="Center Longitude"
-                type="number"
-                step="0.000001"
-                placeholder="-74.0060"
-                error={errors.center_longitude?.message}
-                fullWidth
-                {...register('center_longitude', { valueAsNumber: true })}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              <Input
-                label="Radius (meters)"
-                type="number"
-                step="0.1"
-                placeholder="50"
-                error={errors.radius_meters?.message}
-                fullWidth
-                {...register('radius_meters', { valueAsNumber: true })}
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="is_active"
-                {...register('is_active')}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Active Zone
-              </label>
-            </div>
-
-            <ModalFooter>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit">
-                {editingZone ? 'Update Zone' : 'Create Zone'}
-              </Button>
-            </ModalFooter>
-          </form>
-        </Modal>
       </div>
     </Layout>
   );
 };
 
 export default GeofenceManagement;
-

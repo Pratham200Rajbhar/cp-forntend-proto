@@ -4,11 +4,9 @@ import {
   Calendar, 
   Users, 
   AlertTriangle, 
-  TrendingUp,
-  Clock,
   CheckCircle,
-  Plus,
-  FileText
+  Clock,
+  ArrowRight
 } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import StatCard from '../../components/common/StatCard';
@@ -17,7 +15,7 @@ import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
 import teacherService from '../../services/teacherService';
-import { formatDate, formatRelativeTime, formatPercentage } from '../../utils/helpers';
+import { formatRelativeTime } from '../../utils/helpers';
 import { STATUS_COLORS } from '../../utils/constants';
 import toast from 'react-hot-toast';
 
@@ -45,9 +43,9 @@ const TeacherDashboard = () => {
 
   if (loading) {
     return (
-      <Layout title="Dashboard">
+      <Layout>
         <div className="flex items-center justify-center h-full">
-          <Loader size="lg" text="Loading dashboard..." />
+          <Loader size="lg" text="Loading..." />
         </div>
       </Layout>
     );
@@ -61,11 +59,9 @@ const TeacherDashboard = () => {
       color: 'primary',
     },
     {
-      title: "Present Today",
-      value: dashboardData?.total_students ? 
-        formatPercentage((dashboardData.total_students - (dashboardData.pending_attendance || 0)) / dashboardData.total_students * 100) : 
-        '0%',
-      icon: CheckCircle,
+      title: "Total Students",
+      value: dashboardData?.total_students || 0,
+      icon: Users,
       color: 'success',
     },
     {
@@ -75,20 +71,28 @@ const TeacherDashboard = () => {
       color: 'warning',
     },
     {
-      title: "Avg Attendance",
-      value: '87.5%',
-      icon: TrendingUp,
+      title: "Pending Reviews",
+      value: dashboardData?.pending_reviews || 0,
+      icon: CheckCircle,
       color: 'info',
-      trend: 'up',
-      trendValue: '+2.5%',
     },
   ];
 
   return (
-    <Layout title="Dashboard">
+    <Layout>
       <div className="space-y-6">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Welcome */}
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Dashboard
+          </h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            Manage your classes and attendance
+          </p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <StatCard key={index} {...stat} />
           ))}
@@ -100,30 +104,33 @@ const TeacherDashboard = () => {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <Button
-                variant="primary"
+                variant="outline"
                 fullWidth
                 icon={Calendar}
                 onClick={() => navigate('/teacher/sessions')}
+                className="justify-start"
               >
                 View Sessions
               </Button>
               <Button
-                variant="warning"
+                variant="outline"
                 fullWidth
                 icon={AlertTriangle}
                 onClick={() => navigate('/teacher/flagged-review')}
+                className="justify-start"
               >
                 Review Flagged ({dashboardData?.flagged_attendance || 0})
               </Button>
               <Button
                 variant="outline"
                 fullWidth
-                icon={Plus}
+                icon={CheckCircle}
                 onClick={() => navigate('/teacher/manual-attendance')}
+                className="justify-start"
               >
-                Manual Attendance
+                Mark Attendance
               </Button>
             </div>
           </CardBody>
@@ -134,7 +141,18 @@ const TeacherDashboard = () => {
           {/* Today's Schedule */}
           <Card>
             <CardHeader>
-              <CardTitle>Today's Schedule</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Today's Schedule</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/teacher/sessions')}
+                  icon={ArrowRight}
+                  iconPosition="right"
+                >
+                  View All
+                </Button>
+              </div>
             </CardHeader>
             <CardBody>
               {dashboardData?.today_sessions > 0 ? (
@@ -143,30 +161,33 @@ const TeacherDashboard = () => {
                   {[1, 2, 3].map((item, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
                       onClick={() => navigate('/teacher/sessions')}
                     >
-                      <div className="flex items-center space-x-3">
-                        <div className="h-10 w-10 bg-sky-100 dark:bg-sky-900 rounded-lg flex items-center justify-center">
-                          <Clock className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                          <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900 dark:text-gray-100">
+                          <p className="font-medium text-sm text-gray-900 dark:text-white">
                             Data Structures
                           </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            10:00 AM - 11:30 AM • Room 101
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            10:00 AM - 11:30 AM
                           </p>
                         </div>
                       </div>
-                      <Badge variant="success">Active</Badge>
+                      <Badge variant="success" size="sm">Active</Badge>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                  No sessions scheduled for today
-                </p>
+                <div className="text-center py-8">
+                  <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    No sessions scheduled for today
+                  </p>
+                </div>
               )}
             </CardBody>
           </Card>
@@ -174,7 +195,18 @@ const TeacherDashboard = () => {
           {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>Recent Activity</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/teacher/attendance-history')}
+                  icon={ArrowRight}
+                  iconPosition="right"
+                >
+                  View All
+                </Button>
+              </div>
             </CardHeader>
             <CardBody>
               {dashboardData?.recent_activity && dashboardData.recent_activity.length > 0 ? (
@@ -182,27 +214,23 @@ const TeacherDashboard = () => {
                   {dashboardData.recent_activity.slice(0, 5).map((activity, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md"
+                      className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg"
                     >
-                      <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                        activity.status === 'present' ? 'bg-green-100 dark:bg-green-900' :
-                        activity.status === 'absent' ? 'bg-red-100 dark:bg-red-900' :
-                        'bg-amber-100 dark:bg-amber-900'
+                      <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${
+                        activity.status === 'present' ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400' :
+                        activity.status === 'absent' ? 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400' :
+                        'bg-amber-100 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400'
                       }`}>
-                        <Users className={`h-4 w-4 ${
-                          activity.status === 'present' ? 'text-green-600 dark:text-green-400' :
-                          activity.status === 'absent' ? 'text-red-600 dark:text-red-400' :
-                          'text-amber-600 dark:text-amber-400'
-                        }`} />
+                        <Users className="h-4 w-4" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {activity.student_name}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {activity.session_name} • {activity.subject_name}
+                          {activity.session_name}
                         </p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                           {formatRelativeTime(activity.timestamp)}
                         </p>
                       </div>
@@ -213,57 +241,19 @@ const TeacherDashboard = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                  No recent activity
-                </p>
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    No recent activity
+                  </p>
+                </div>
               )}
             </CardBody>
           </Card>
         </div>
-
-        {/* Subjects Overview */}
-        <Card>
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle>My Subjects</CardTitle>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={() => navigate('/teacher/sessions')}
-            >
-              View All
-            </Button>
-          </CardHeader>
-          <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* Mock subjects - replace with actual data */}
-              {[1, 2, 3].map((item, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-gradient-to-br from-sky-50 to-blue-100 dark:from-gray-700 dark:to-gray-600 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={() => navigate('/teacher/sessions')}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                      Data Structures
-                    </h4>
-                    <Badge variant="primary">CS301</Badge>
-                  </div>
-                  <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
-                    <p>15 Sessions</p>
-                    <p>25 Students</p>
-                    <p className="font-medium text-sky-600 dark:text-sky-400">
-                      85.5% Attendance
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
       </div>
     </Layout>
   );
 };
 
 export default TeacherDashboard;
-

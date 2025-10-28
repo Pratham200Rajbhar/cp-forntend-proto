@@ -1,47 +1,23 @@
 import { useEffect, useState } from 'react';
-import { UserPlus, Search, Edit, Trash2, GraduationCap, Mail, Phone, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UserPlus, Search, Edit, Trash2, GraduationCap, Mail, Phone } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
-import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
+import Card, { CardBody } from '../../components/common/Card';
 import Table from '../../components/common/Table';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import Badge from '../../components/common/Badge';
-import Modal, { ModalFooter } from '../../components/common/Modal';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import studentService from '../../services/studentService';
 import { formatDate } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 
-const studentSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  full_name: z.string().min(1, 'Full name is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters').optional(),
-  department: z.string().min(1, 'Department is required'),
-  phone_number: z.string().optional(),
-  student_id: z.string().min(1, 'Student ID is required'),
-  is_active: z.boolean().optional(),
-});
-
 const StudentManagement = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [editingStudent, setEditingStudent] = useState(null);
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(studentSchema),
-  });
 
   useEffect(() => {
     fetchStudents();
@@ -63,42 +39,6 @@ const StudentManagement = () => {
     }
   };
 
-  const handleOpenModal = (student = null) => {
-    setEditingStudent(student);
-    if (student) {
-      reset(student);
-    } else {
-      reset({
-        email: '',
-        username: '',
-        full_name: '',
-        password: '',
-        department: '',
-        phone_number: '',
-        student_id: '',
-        is_active: true,
-      });
-    }
-    setShowModal(true);
-  };
-
-  const onSubmit = async (data) => {
-    try {
-      if (editingStudent) {
-        await studentService.updateStudent(editingStudent.id, data);
-        toast.success('Student updated successfully');
-      } else {
-        await studentService.createStudent(data);
-        toast.success('Student created successfully');
-      }
-      setShowModal(false);
-      fetchStudents();
-    } catch (error) {
-      toast.error(`Failed to ${editingStudent ? 'update' : 'create'} student`);
-      console.error('Student save error:', error);
-    }
-  };
-
   const handleDelete = async (studentId) => {
     if (!confirm('Are you sure you want to delete this student?')) return;
 
@@ -115,8 +55,7 @@ const StudentManagement = () => {
   const filteredStudents = students.filter(student =>
     student.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.student_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.username?.toLowerCase().includes(searchTerm.toLowerCase())
+    student.student_id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const departments = [
@@ -127,9 +66,6 @@ const StudentManagement = () => {
     'Civil Engineering',
     'Electrical Engineering',
     'Business Administration',
-    'Mathematics',
-    'Physics',
-    'Chemistry',
   ];
 
   const columns = [
@@ -137,13 +73,13 @@ const StudentManagement = () => {
       key: 'full_name',
       header: 'Student',
       render: (value, row) => (
-        <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-            <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+            <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">{value}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">ID: {row.student_id}</p>
+            <p className="font-medium text-gray-900 dark:text-white">{value}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{row.student_id}</p>
           </div>
         </div>
       ),
@@ -152,14 +88,14 @@ const StudentManagement = () => {
       key: 'email',
       header: 'Contact',
       render: (value, row) => (
-        <div>
-          <div className="flex items-center space-x-1 text-sm">
-            <Mail className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-900 dark:text-gray-100">{value}</span>
+        <div className="space-y-0.5">
+          <div className="flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
+            <Mail className="h-3.5 w-3.5 text-gray-400" />
+            <span>{value}</span>
           </div>
           {row.phone_number && (
-            <div className="flex items-center space-x-1 text-sm text-gray-500 dark:text-gray-400">
-              <Phone className="h-4 w-4" />
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+              <Phone className="h-3.5 w-3.5" />
               <span>{row.phone_number}</span>
             </div>
           )}
@@ -170,17 +106,14 @@ const StudentManagement = () => {
       key: 'department',
       header: 'Department',
       render: (value) => (
-        <div className="flex items-center space-x-1">
-          <MapPin className="h-4 w-4 text-gray-400" />
-          <span className="text-sm">{value}</span>
-        </div>
+        <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>
       ),
     },
     {
       key: 'is_active',
       header: 'Status',
       render: (value) => (
-        <Badge variant={value ? 'success' : 'error'}>
+        <Badge variant={value ? 'success' : 'error'} size="sm">
           {value ? 'Active' : 'Inactive'}
         </Badge>
       ),
@@ -188,32 +121,37 @@ const StudentManagement = () => {
     {
       key: 'created_at',
       header: 'Enrolled',
-      render: (value) => formatDate(value, 'MMM dd, yyyy'),
+      render: (value) => (
+        <span className="text-sm text-gray-600 dark:text-gray-400">
+          {formatDate(value, 'MMM dd, yyyy')}
+        </span>
+      ),
     },
     {
       key: 'actions',
       header: 'Actions',
       render: (_, row) => (
-        <div className="flex space-x-2">
+        <div className="flex gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             icon={Edit}
             onClick={(e) => {
               e.stopPropagation();
-              handleOpenModal(row);
+              navigate(`/admin/students/edit/${row.id}`);
             }}
           >
             Edit
           </Button>
           <Button
-            variant="error"
+            variant="ghost"
             size="sm"
             icon={Trash2}
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(row.id);
             }}
+            className="text-red-600 hover:text-red-700 dark:text-red-400"
           >
             Delete
           </Button>
@@ -223,21 +161,27 @@ const StudentManagement = () => {
   ];
 
   return (
-    <Layout title="Student Management">
+    <Layout>
       <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Students</h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Manage student accounts and information
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            icon={UserPlus}
+            onClick={() => navigate('/admin/students/add')}
+          >
+            Add Student
+          </Button>
+        </div>
+
+        {/* Main Content */}
         <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-              <CardTitle>Student Management</CardTitle>
-              <Button
-                variant="primary"
-                icon={UserPlus}
-                onClick={() => handleOpenModal()}
-              >
-                Add Student
-              </Button>
-            </div>
-          </CardHeader>
           <CardBody>
             {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -248,7 +192,7 @@ const StudentManagement = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Select
-                placeholder="Filter by department"
+                placeholder="All Departments"
                 value={selectedDepartment}
                 onChange={(e) => setSelectedDepartment(e.target.value)}
                 options={[
@@ -258,7 +202,7 @@ const StudentManagement = () => {
               />
             </div>
 
-            {/* Students Table */}
+            {/* Table */}
             <Table
               columns={columns}
               data={filteredStudents}
@@ -267,103 +211,6 @@ const StudentManagement = () => {
             />
           </CardBody>
         </Card>
-
-        {/* Add/Edit Student Modal */}
-        <Modal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          title={editingStudent ? 'Edit Student' : 'Add New Student'}
-          size="lg"
-        >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Full Name"
-                placeholder="John Doe"
-                error={errors.full_name?.message}
-                fullWidth
-                {...register('full_name')}
-              />
-              <Input
-                label="Username"
-                placeholder="johndoe"
-                error={errors.username?.message}
-                fullWidth
-                {...register('username')}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Email"
-                type="email"
-                placeholder="john@university.edu"
-                error={errors.email?.message}
-                fullWidth
-                {...register('email')}
-              />
-              <Input
-                label={editingStudent ? 'Password (leave blank to keep current)' : 'Password'}
-                type="password"
-                placeholder="••••••••"
-                error={errors.password?.message}
-                fullWidth
-                {...register('password')}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Student ID"
-                placeholder="STU001"
-                error={errors.student_id?.message}
-                fullWidth
-                {...register('student_id')}
-              />
-              <Select
-                label="Department"
-                error={errors.department?.message}
-                fullWidth
-                {...register('department')}
-                options={departments.map(dept => ({ value: dept, label: dept }))}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Phone Number"
-                placeholder="+1234567890"
-                error={errors.phone_number?.message}
-                fullWidth
-                {...register('phone_number')}
-              />
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  {...register('is_active')}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="is_active" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Active Student
-                </label>
-              </div>
-            </div>
-
-            <ModalFooter>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button variant="primary" type="submit">
-                {editingStudent ? 'Update Student' : 'Create Student'}
-              </Button>
-            </ModalFooter>
-          </form>
-        </Modal>
       </div>
     </Layout>
   );

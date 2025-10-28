@@ -19,10 +19,15 @@ import TeacherReports from './pages/teacher/Reports';
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import StudentManagement from './pages/admin/StudentManagement';
+import StudentForm from './pages/admin/StudentForm';
 import TeacherManagement from './pages/admin/TeacherManagement';
+import TeacherForm from './pages/admin/TeacherForm';
 import SubjectManagement from './pages/admin/SubjectManagement';
+import SubjectForm from './pages/admin/SubjectForm';
 import SessionManagement from './pages/admin/SessionManagement';
+import SessionForm from './pages/admin/SessionForm';
 import GeofenceManagement from './pages/admin/GeofenceManagement';
+import GeofenceForm from './pages/admin/GeofenceForm';
 import AttendanceOversight from './pages/admin/AttendanceOversight';
 import SystemConfig from './pages/admin/SystemConfig';
 import AuditLogs from './pages/admin/AuditLogs';
@@ -114,10 +119,42 @@ function App() {
                 }
               />
               <Route
+                path="/admin/students/add"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <StudentForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/students/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <StudentForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/admin/teachers"
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <TeacherManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/teachers/add"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <TeacherForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/teachers/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <TeacherForm />
                   </ProtectedRoute>
                 }
               />
@@ -130,6 +167,22 @@ function App() {
                 }
               />
               <Route
+                path="/admin/subjects/add"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <SubjectForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/subjects/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <SubjectForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/admin/sessions"
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
@@ -138,10 +191,42 @@ function App() {
                 }
               />
               <Route
+                path="/admin/sessions/add"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <SessionForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/sessions/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <SessionForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/admin/geofence"
                 element={
                   <ProtectedRoute allowedRoles={['admin']}>
                     <GeofenceManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/geofence/add"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <GeofenceForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/geofence/edit/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <GeofenceForm />
                   </ProtectedRoute>
                 }
               />

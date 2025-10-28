@@ -1,60 +1,73 @@
-import Card, { CardBody } from './Card';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 const StatCard = ({
   title,
   value,
   icon: Icon,
+  color = 'primary',
+  subtitle,
   trend,
   trendValue,
-  subtitle,
-  color = 'primary',
-  className = '',
+  onClick,
 }) => {
-  const colors = {
-    primary: 'text-sky-600 bg-sky-100 dark:text-sky-400 dark:bg-sky-900/50',
-    success: 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/50',
-    warning: 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/50',
-    error: 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/50',
-    info: 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/50',
+  const colorVariants = {
+    primary: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50',
+    success: 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50',
+    warning: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50',
+    error: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50',
+    info: 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50',
+    purple: 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/50',
   };
 
-  const colorClass = colors[color] || colors.primary;
+  const colorClass = colorVariants[color] || colorVariants.primary;
 
   return (
-    <Card className={className}>
-      <CardBody>
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
-            <p className="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
-            {subtitle && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
-            )}
+    <div
+      className={`bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-5 ${
+        onClick ? 'cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-colors' : ''
+      }`}
+      onClick={onClick}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            {title}
+          </p>
+          <div className="flex items-baseline gap-2 mt-2">
+            <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+              {value}
+            </p>
             {trend && trendValue && (
-              <div className="mt-2 flex items-center space-x-1">
+              <span
+                className={`flex items-center text-xs font-medium ${
+                  trend === 'up'
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-red-600 dark:text-red-400'
+                }`}
+              >
                 {trend === 'up' ? (
-                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <TrendingUp className="h-3 w-3 mr-1" />
                 ) : (
-                  <TrendingDown className="h-4 w-4 text-red-600" />
+                  <TrendingDown className="h-3 w-3 mr-1" />
                 )}
-                <span className={`text-sm font-medium ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                  {trendValue}
-                </span>
-                <span className="text-sm text-gray-500 dark:text-gray-400">vs last period</span>
-              </div>
+                {trendValue}
+              </span>
             )}
           </div>
-          {Icon && (
-            <div className={`p-3 rounded-lg ${colorClass}`}>
-              <Icon className="h-8 w-8" />
-            </div>
+          {subtitle && (
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {subtitle}
+            </p>
           )}
         </div>
-      </CardBody>
-    </Card>
+        {Icon && (
+          <div className={`p-2 rounded-lg ${colorClass}`}>
+            <Icon className="h-5 w-5" />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
 export default StatCard;
-
