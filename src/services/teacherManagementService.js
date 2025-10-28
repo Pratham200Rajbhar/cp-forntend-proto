@@ -7,9 +7,11 @@ const teacherManagementService = {
    * GET /api/v1/admin/users?role=teacher
    */
   getTeachers: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.USERS, { 
-      ...params, 
-      role: 'teacher' 
+    const response = await api.get(API_ENDPOINTS.ADMIN.USERS, {
+      params: {
+        ...params,
+        role: 'teacher',
+      },
     });
     return response.data;
   },
@@ -61,9 +63,11 @@ const teacherManagementService = {
    * GET /api/v1/admin/subjects?teacher_id={teacher_id}
    */
   getTeacherSubjects: async (teacherId, params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SUBJECTS, { 
-      ...params,
-      teacher_id: teacherId 
+    const response = await api.get(API_ENDPOINTS.ADMIN.SUBJECTS, {
+      params: {
+        ...params,
+        teacher_id: teacherId,
+      },
     });
     return response.data;
   },
@@ -73,9 +77,11 @@ const teacherManagementService = {
    * GET /api/v1/admin/sessions?teacher_id={teacher_id}
    */
   getTeacherSessions: async (teacherId, params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SESSIONS, { 
-      ...params,
-      teacher_id: teacherId 
+    const response = await api.get(API_ENDPOINTS.ADMIN.SESSIONS, {
+      params: {
+        ...params,
+        teacher_id: teacherId,
+      },
     });
     return response.data;
   },

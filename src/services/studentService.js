@@ -7,9 +7,11 @@ const studentService = {
    * GET /api/v1/admin/users?role=student
    */
   getStudents: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.USERS, { 
-      ...params, 
-      role: 'student' 
+    const response = await api.get(API_ENDPOINTS.ADMIN.USERS, {
+      params: {
+        ...params,
+        role: 'student',
+      },
     });
     return response.data;
   },
@@ -56,17 +58,8 @@ const studentService = {
     return response.data;
   },
 
-  /**
-   * Get student attendance records (Admin only)
-   * GET /api/v1/attendance/my-attendance
-   */
-  getStudentAttendance: async (studentId, params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ATTENDANCE.MY_ATTENDANCE, { 
-      ...params,
-      student_id: studentId 
-    });
-    return response.data;
-  },
+  // Note: No direct admin endpoint to fetch another user's "my-attendance".
+  // Use report or session-specific endpoints from admin/attendance APIs instead.
 };
 
 export default studentService;
