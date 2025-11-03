@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, MapPin, Compass, Maximize, FileText } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -93,6 +93,7 @@ const GeofenceForm = () => {
                 <Input
                   label="Zone Name"
                   placeholder="Main Building"
+                  icon={MapPin}
                   error={errors.name?.message}
                   fullWidth
                   {...register('name')}
@@ -110,6 +111,7 @@ const GeofenceForm = () => {
                     type="number"
                     step="any"
                     placeholder="40.7128"
+                    icon={Compass}
                     error={errors.latitude?.message}
                     fullWidth
                     {...register('latitude', { valueAsNumber: true })}
@@ -119,6 +121,7 @@ const GeofenceForm = () => {
                     type="number"
                     step="any"
                     placeholder="-74.0060"
+                    icon={Compass}
                     error={errors.longitude?.message}
                     fullWidth
                     {...register('longitude', { valueAsNumber: true })}
@@ -127,6 +130,7 @@ const GeofenceForm = () => {
                     label="Radius (meters)"
                     type="number"
                     placeholder="100"
+                    icon={Maximize}
                     error={errors.radius?.message}
                     fullWidth
                     {...register('radius', { valueAsNumber: true })}
@@ -142,6 +146,7 @@ const GeofenceForm = () => {
                 <Textarea
                   label="Description (Optional)"
                   placeholder="Description of the geofence zone"
+                  icon={FileText}
                   error={errors.description?.message}
                   rows={4}
                   fullWidth

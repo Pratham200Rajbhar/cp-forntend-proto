@@ -29,14 +29,14 @@ const Table = ({
 
   return (
     <div className={`w-full ${className}`}>
-      <div className="overflow-x-auto scrollbar-thin">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900/50">
+      <div className="overflow-x-auto table-scroll">
+        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+          <thead className="bg-gray-50/50 dark:bg-gray-900/30">
             <tr>
               {columns.map((column, index) => (
                 <th
                   key={column.key || index}
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${column.headerClassName || ''}`}
+                  className={`px-6 py-3.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider ${column.headerClassName || ''}`}
                   style={{ width: column.width }}
                 >
                   {column.header}
@@ -44,17 +44,17 @@ const Table = ({
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
             {data.map((row, rowIndex) => (
               <tr
                 key={row.id || rowIndex}
                 onClick={() => onRowClick && onRowClick(row)}
-                className={`${onRowClick ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50' : ''} transition-colors`}
+                className={`${onRowClick ? 'cursor-pointer hover:bg-gray-50/50 dark:hover:bg-gray-800/50' : ''} transition-colors duration-150`}
               >
                 {columns.map((column, colIndex) => (
                   <td
                     key={column.key || colIndex}
-                    className={`px-6 py-4 whitespace-nowrap text-sm ${column.className || 'text-gray-900 dark:text-gray-100'}`}
+                    className={`px-6 py-4 ${column.noWrap !== false ? 'whitespace-nowrap' : ''} text-sm ${column.className || 'text-gray-900 dark:text-gray-100'}`}
                   >
                     {column.render ? column.render(row[column.key], row, rowIndex) : row[column.key]}
                   </td>
@@ -66,8 +66,8 @@ const Table = ({
       </div>
 
       {pagination && (
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-          <div className="text-sm text-gray-700 dark:text-gray-300">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-900/20">
+          <div className="text-sm text-gray-600 dark:text-gray-400">
             Showing {pagination.from} to {pagination.to} of {pagination.total} results
           </div>
           <div className="flex items-center space-x-2">
@@ -85,7 +85,7 @@ const Table = ({
               disabled={pagination.currentPage === 1}
               icon={ChevronLeft}
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
               Page {pagination.currentPage} of {pagination.totalPages}
             </span>
             <Button

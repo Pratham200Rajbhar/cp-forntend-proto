@@ -1,5 +1,5 @@
-import api from './api';
-import { API_ENDPOINTS } from '../utils/constants';
+import { ok } from './mockUtils';
+import { mockStudents } from './mockData';
 
 const studentService = {
   /**
@@ -7,56 +7,38 @@ const studentService = {
    * GET /api/v1/admin/users?role=student
    */
   getStudents: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.USERS, {
-      params: {
-        ...params,
-        role: 'student',
-      },
-    });
-    return response.data;
+    const { q } = params;
+    const hay = (s) => [s.name, s.email, s.rollNumber, s.department, s.year, s.section].filter(Boolean).join(' ').toLowerCase();
+    const filtered = q ? mockStudents.filter((s) => hay(s).includes(q.toLowerCase())) : mockStudents;
+    return ok(filtered);
   },
 
   /**
    * Get student by ID (Admin only)
    * GET /api/v1/admin/users/{user_id}
    */
-  getStudentById: async (studentId) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.USER_BY_ID(studentId));
-    return response.data;
-  },
+  getStudentById: async (studentId) => ok(mockStudents.find((s) => s.id === studentId) || null),
+
+  // Compatibility alias for pages using getStudent(id)
+  getStudent: async (studentId) => ok(mockStudents.find((s) => s.id === studentId) || null),
 
   /**
    * Create a new student (Admin only)
    * POST /api/v1/admin/users
    */
-  createStudent: async (studentData) => {
-    const response = await api.post(API_ENDPOINTS.ADMIN.USERS, {
-      ...studentData,
-      role: 'student'
-    });
-    return response.data;
-  },
+  createStudent: async (studentData) => ok({ ...studentData, id: studentData.id || 'NEW-STU' }),
 
   /**
    * Update student information (Admin only)
    * PUT /api/v1/admin/users/{user_id}
    */
-  updateStudent: async (studentId, studentData) => {
-    const response = await api.put(API_ENDPOINTS.ADMIN.USER_BY_ID(studentId), {
-      ...studentData,
-      role: 'student'
-    });
-    return response.data;
-  },
+  updateStudent: async (studentId, studentData) => ok({ ...studentData, id: studentId }),
 
   /**
    * Delete student (Admin only)
    * DELETE /api/v1/admin/users/{user_id}
    */
-  deleteStudent: async (studentId) => {
-    const response = await api.delete(API_ENDPOINTS.ADMIN.USER_BY_ID(studentId));
-    return response.data;
-  },
+  deleteStudent: async (studentId) => ok({ success: true, id: studentId }),
 
   // Note: No direct admin endpoint to fetch another user's "my-attendance".
   // Use report or session-specific endpoints from admin/attendance APIs instead.

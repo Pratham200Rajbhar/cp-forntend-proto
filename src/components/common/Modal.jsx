@@ -55,7 +55,7 @@ const Modal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm"
       onClick={handleOverlayClick}
     >
       <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full ${sizeClass} max-h-[90vh] flex flex-col`}>
@@ -73,7 +73,7 @@ const Modal = ({
         </div>
 
         {/* Body */}
-        <div className="px-6 py-4 overflow-y-auto scrollbar-thin flex-1">
+        <div className="px-6 py-4 overflow-y-auto flex-1 modal-scroll">
           {children}
         </div>
 

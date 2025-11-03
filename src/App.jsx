@@ -11,7 +11,7 @@ import Login from './pages/auth/Login';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import Sessions from './pages/teacher/Sessions';
 import SessionDetails from './pages/teacher/SessionDetails';
-import FlaggedReview from './pages/teacher/FlaggedReview';
+import SuspiciousReview from './pages/teacher/FlaggedReview';
 import ManualAttendance from './pages/teacher/ManualAttendance';
 import AttendanceHistory from './pages/teacher/AttendanceHistory';
 import TeacherReports from './pages/teacher/Reports';
@@ -68,14 +68,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/teacher/flagged-review"
-                element={
-                  <ProtectedRoute allowedRoles={['teacher']}>
-                    <FlaggedReview />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/teacher/flagged-review"
+                  element={
+                    <ProtectedRoute allowedRoles={['teacher']}>
+                      <SuspiciousReview />
+                    </ProtectedRoute>
+                  }
+                />
               <Route
                 path="/teacher/manual-attendance"
                 element={

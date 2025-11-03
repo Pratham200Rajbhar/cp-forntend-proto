@@ -14,8 +14,8 @@ import { formatDate, formatScore, getScoreBadgeColor } from '../../utils/helpers
 import { AI_THRESHOLDS } from '../../utils/constants';
 import toast from 'react-hot-toast';
 
-const FlaggedReview = () => {
-  const [flaggedRecords, setFlaggedRecords] = useState([]);
+const SuspiciousReview = () => {
+  const [suspiciousRecords, setSuspiciousRecords] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState('');
@@ -31,18 +31,18 @@ const FlaggedReview = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [flaggedData, subjectsData] = await Promise.all([
-        teacherService.getFlaggedAttendance({ 
+      const [suspiciousData, subjectsData] = await Promise.all([
+        teacherService.getSuspiciousAttendance({ 
           subject_id: selectedSubject || undefined,
           limit: 100 
         }),
         teacherService.getSubjects()
       ]);
-      setFlaggedRecords(flaggedData);
+      setSuspiciousRecords(suspiciousData);
       setSubjects(subjectsData);
     } catch (error) {
-      toast.error('Failed to load flagged records');
-      console.error('Flagged records error:', error);
+      toast.error('Failed to load suspicious records');
+      console.error('Suspicious records error:', error);
     } finally {
       setLoading(false);
     }
@@ -166,7 +166,7 @@ const FlaggedReview = () => {
   ];
 
   return (
-    <Layout title="Flagged Review">
+    <Layout title="Suspicious Review">
       <div className="space-y-6">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -174,9 +174,9 @@ const FlaggedReview = () => {
             <CardBody>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Flagged</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Suspicious</p>
                   <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">
-                    {flaggedRecords.length}
+                    {suspiciousRecords.length}
                   </p>
                 </div>
                 <div className="p-3 bg-amber-100 dark:bg-amber-900/50 rounded-lg">
@@ -192,7 +192,7 @@ const FlaggedReview = () => {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Needs Review</p>
                   <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-                    {flaggedRecords.filter(r => !r.is_manually_approved).length}
+                    {suspiciousRecords.filter(r => !r.is_manually_approved).length}
                   </p>
                 </div>
                 <div className="p-3 bg-red-100 dark:bg-red-900/50 rounded-lg">
@@ -208,7 +208,7 @@ const FlaggedReview = () => {
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Reviewed</p>
                   <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-                    {flaggedRecords.filter(r => r.is_manually_approved).length}
+                    {suspiciousRecords.filter(r => r.is_manually_approved).length}
                   </p>
                 </div>
                 <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-lg">
@@ -223,7 +223,7 @@ const FlaggedReview = () => {
         <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-              <CardTitle>Flagged Attendance Records</CardTitle>
+              <CardTitle>Suspicious Attendance Records</CardTitle>
               <div className="w-full md:w-64">
                 <Select
                   placeholder="Filter by subject"
@@ -237,9 +237,9 @@ const FlaggedReview = () => {
           <CardBody>
             <Table
               columns={columns}
-              data={flaggedRecords}
+              data={suspiciousRecords}
               loading={loading}
-              emptyMessage="No flagged records found"
+              emptyMessage="No suspicious records found"
             />
           </CardBody>
         </Card>
@@ -252,7 +252,7 @@ const FlaggedReview = () => {
             setSelectedRecord(null);
             setReviewReason('');
           }}
-          title="Review Flagged Attendance"
+          title="Review Suspicious Attendance"
           size="lg"
         >
           <div className="space-y-6">
@@ -371,5 +371,5 @@ const FlaggedReview = () => {
   );
 };
 
-export default FlaggedReview;
+export default SuspiciousReview;
 

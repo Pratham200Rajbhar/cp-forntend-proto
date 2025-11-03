@@ -40,7 +40,7 @@ const AttendanceHistory = () => {
       totalSessions: 15,
       present: 13,
       absent: 1,
-      flagged: 1,
+      suspicious: 1,
       rate: 86.7,
     },
     {
@@ -50,7 +50,7 @@ const AttendanceHistory = () => {
       totalSessions: 15,
       present: 15,
       absent: 0,
-      flagged: 0,
+      suspicious: 0,
       rate: 100,
     },
   ];
@@ -182,7 +182,7 @@ const AttendanceHistory = () => {
                       <div>
                         <p className="text-gray-600 dark:text-gray-400">Flagged</p>
                         <p className="font-medium text-amber-600 dark:text-amber-400">
-                          {student.flagged}
+                          {student.suspicious}
                         </p>
                       </div>
                     </div>

@@ -102,7 +102,7 @@ const AttendanceOversight = () => {
   const totalRecords = filteredData.length;
   const presentCount = filteredData.filter(r => r.status === 'present').length;
   const absentCount = filteredData.filter(r => r.status === 'absent').length;
-  const flaggedCount = filteredData.filter(r => r.status === 'flagged').length;
+  const suspiciousCount = filteredData.filter(r => r.status === 'suspicious').length;
   const attendanceRate = totalRecords > 0 ? ((presentCount / totalRecords) * 100).toFixed(1) : 0;
 
   const statsCards = [
@@ -126,7 +126,7 @@ const AttendanceOversight = () => {
     },
     {
       title: 'Flagged',
-      value: flaggedCount,
+      value: suspiciousCount,
       icon: AlertCircle,
       color: 'warning',
     },
@@ -181,7 +181,7 @@ const AttendanceOversight = () => {
         <Badge variant={
           value === 'present' ? 'success' :
           value === 'absent' ? 'error' :
-          value === 'flagged' ? 'warning' : 'info'
+          value === 'suspicious' ? 'warning' : 'info'
         }>
           {value}
         </Badge>
@@ -280,7 +280,7 @@ const AttendanceOversight = () => {
                   { value: '', label: 'All Status' },
                   { value: 'present', label: 'Present' },
                   { value: 'absent', label: 'Absent' },
-                  { value: 'flagged', label: 'Flagged' },
+                  { value: 'suspicious', label: 'Flagged' },
                 ]}
               />
             </div>

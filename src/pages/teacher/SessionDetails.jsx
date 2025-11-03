@@ -244,7 +244,7 @@ const SessionDetails = () => {
                 <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
                   <p className="text-sm text-gray-600 dark:text-gray-400">Flagged</p>
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                    {stats.flagged_count || 0}
+                    {stats.suspicious_count || 0}
                   </p>
                 </div>
                 <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-lg">

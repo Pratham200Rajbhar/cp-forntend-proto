@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, BookOpen, Hash, FileText, UserCheck } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -106,6 +106,7 @@ const SubjectForm = () => {
                   <Input
                     label="Subject Name"
                     placeholder="Data Structures and Algorithms"
+                    icon={BookOpen}
                     error={errors.name?.message}
                     fullWidth
                     {...register('name')}
@@ -113,6 +114,7 @@ const SubjectForm = () => {
                   <Input
                     label="Subject Code"
                     placeholder="CS201"
+                    icon={Hash}
                     error={errors.code?.message}
                     fullWidth
                     {...register('code')}
@@ -125,6 +127,7 @@ const SubjectForm = () => {
                 <Textarea
                   label="Description (Optional)"
                   placeholder="Introduction to data structures and algorithms"
+                  icon={FileText}
                   error={errors.description?.message}
                   rows={4}
                   fullWidth
@@ -139,6 +142,7 @@ const SubjectForm = () => {
                 </h3>
                 <Select
                   label="Assigned Teacher"
+                  icon={UserCheck}
                   error={errors.teacher_id?.message}
                   fullWidth
                   {...register('teacher_id', { valueAsNumber: true })}

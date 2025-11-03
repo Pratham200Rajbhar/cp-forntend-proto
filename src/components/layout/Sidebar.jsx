@@ -21,7 +21,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const teacherLinks = [
     { path: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/teacher/sessions', label: 'Sessions', icon: Calendar },
-    { path: '/teacher/flagged-review', label: 'Review', icon: Activity },
+    { path: '/teacher/flagged-review', label: 'Suspicious Review', icon: Activity },
     { path: '/teacher/manual-attendance', label: 'Attendance', icon: CheckSquare },
     { path: '/teacher/attendance-history', label: 'History', icon: FileText },
     { path: '/teacher/reports', label: 'Reports', icon: FileText },
@@ -46,14 +46,14 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/50 z-[45] lg:hidden backdrop-blur-sm"
           onClick={onClose}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static ${
+        className={`fixed inset-y-0 left-0 z-[50] w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -77,7 +77,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto sidebar-nav">
             {links.map((link) => (
               <NavLink
                 key={link.path}

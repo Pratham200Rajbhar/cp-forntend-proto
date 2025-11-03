@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, BookOpen, FileText, Calendar, Clock, MapPin } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -128,6 +128,7 @@ const SessionForm = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <Select
                     label="Subject"
+                    icon={BookOpen}
                     error={errors.subject_id?.message}
                     fullWidth
                     {...register('subject_id', { valueAsNumber: true })}
@@ -139,6 +140,7 @@ const SessionForm = () => {
                   <Input
                     label="Session Name"
                     placeholder="Data Structures Lecture 1"
+                    icon={FileText}
                     error={errors.session_name?.message}
                     fullWidth
                     {...register('session_name')}
@@ -155,6 +157,7 @@ const SessionForm = () => {
                   <Input
                     label="Session Date"
                     type="date"
+                    icon={Calendar}
                     error={errors.session_date?.message}
                     fullWidth
                     {...register('session_date')}
@@ -162,6 +165,7 @@ const SessionForm = () => {
                   <Input
                     label="Start Time"
                     type="time"
+                    icon={Clock}
                     error={errors.start_time?.message}
                     fullWidth
                     {...register('start_time')}
@@ -169,6 +173,7 @@ const SessionForm = () => {
                   <Input
                     label="End Time"
                     type="time"
+                    icon={Clock}
                     error={errors.end_time?.message}
                     fullWidth
                     {...register('end_time')}
@@ -183,6 +188,7 @@ const SessionForm = () => {
                 </h3>
                 <Select
                   label="Geofence Zone"
+                  icon={MapPin}
                   fullWidth
                   {...register('geofence_zone_id', { valueAsNumber: true })}
                   options={[

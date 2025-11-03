@@ -65,8 +65,7 @@ const SubjectManagement = () => {
 
   const filteredSubjects = subjects.filter(subject =>
     subject.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    subject.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    subject.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    subject.code?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const columns = [
@@ -86,12 +85,17 @@ const SubjectManagement = () => {
       ),
     },
     {
-      key: 'description',
-      header: 'Description',
+      key: 'credits',
+      header: 'Credits',
       render: (value) => (
-        <span className="text-sm text-gray-700 dark:text-gray-300">
-          {value || '-'}
-        </span>
+        <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>
+      ),
+    },
+    {
+      key: 'semester',
+      header: 'Semester',
+      render: (value) => (
+        <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>
       ),
     },
     {
@@ -102,7 +106,7 @@ const SubjectManagement = () => {
         return teacher ? (
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">{teacher.full_name}</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300">{teacher.name}</span>
           </div>
         ) : (
           <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
@@ -110,7 +114,7 @@ const SubjectManagement = () => {
       },
     },
     {
-      key: 'created_at',
+      key: 'createdAt',
       header: 'Created',
       render: (value) => (
         <span className="text-sm text-gray-700 dark:text-gray-300">
@@ -173,6 +177,9 @@ const SubjectManagement = () => {
 
         {/* Main Content */}
         <Card>
+          <CardHeader>
+            <CardTitle>Subjects</CardTitle>
+          </CardHeader>
           <CardBody>
             {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

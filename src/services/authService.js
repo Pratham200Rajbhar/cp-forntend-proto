@@ -1,5 +1,6 @@
-import api from './api';
-import { API_ENDPOINTS, STORAGE_KEYS } from '../utils/constants';
+import { STORAGE_KEYS, USER_ROLES } from '../utils/constants';
+import { mockUsers } from './mockData';
+import { ok, badRequest } from './mockUtils';
 
 const authService = {
   /**
@@ -7,39 +8,36 @@ const authService = {
    * POST /api/v1/auth/login
    */
   login: async (email, password) => {
-    const response = await api.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
-    const { access_token, refresh_token } = response.data;
-    
-    // Store tokens
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, access_token);
-    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refresh_token);
-    
-    return response.data;
+    const user = mockUsers.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    );
+    if (!user) return badRequest('Invalid credentials');
+
+    const accessToken = `mock-access-${user.id}`;
+    const refreshToken = `mock-refresh-${user.id}`;
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    localStorage.setItem(
+      STORAGE_KEYS.USER_DATA,
+      JSON.stringify({ id: user.id, name: user.name, email: user.email, role: user.role })
+    );
+    return ok({ access_token: accessToken, refresh_token: refreshToken });
   },
 
   /**
    * Register new user
    * POST /api/v1/auth/register
    */
-  register: async (userData) => {
-    const response = await api.post(API_ENDPOINTS.AUTH.REGISTER, userData);
-    return response.data;
-  },
+  register: async () => badRequest('Registration disabled in mock mode'),
 
   /**
    * Refresh access token
    * POST /api/v1/auth/refresh
    */
   refreshToken: async (refreshToken) => {
-    const response = await api.post(API_ENDPOINTS.AUTH.REFRESH, {
-      refresh_token: refreshToken
-    });
-    const { access_token } = response.data;
-    
-    // Store new access token
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, access_token);
-    
-    return response.data;
+    const newAccess = `${refreshToken}-rotated`;
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, newAccess);
+    return ok({ access_token: newAccess });
   },
 
   /**
@@ -47,13 +45,9 @@ const authService = {
    * GET /api/v1/auth/me
    */
   getCurrentUser: async () => {
-    const response = await api.get(API_ENDPOINTS.AUTH.ME);
-    const userData = response.data;
-    
-    // Store user data
-    localStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(userData));
-    
-    return userData;
+    const stored = localStorage.getItem(STORAGE_KEYS.USER_DATA);
+    if (stored) return ok(JSON.parse(stored));
+    return badRequest('No user session');
   },
 
   /**
@@ -61,50 +55,29 @@ const authService = {
    * POST /api/v1/auth/logout
    */
   logout: async () => {
-    try {
-      await api.post(API_ENDPOINTS.AUTH.LOGOUT);
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      // Clear all stored data
-      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.USER_DATA);
-    }
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.USER_DATA);
+    return ok({ success: true });
   },
 
   /**
    * Request password reset
    * POST /api/v1/auth/password-reset
    */
-  requestPasswordReset: async (email) => {
-    const response = await api.post(API_ENDPOINTS.AUTH.PASSWORD_RESET, { email });
-    return response.data;
-  },
+  requestPasswordReset: async () => badRequest('Not available in mock mode'),
 
   /**
    * Confirm password reset
    * POST /api/v1/auth/password-reset/confirm
    */
-  confirmPasswordReset: async (token, newPassword) => {
-    const response = await api.post(API_ENDPOINTS.AUTH.PASSWORD_RESET_CONFIRM, {
-      token,
-      new_password: newPassword
-    });
-    return response.data;
-  },
+  confirmPasswordReset: async () => badRequest('Not available in mock mode'),
 
   /**
    * Change password
    * POST /api/v1/auth/change-password
    */
-  changePassword: async (currentPassword, newPassword) => {
-    const response = await api.post(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, {
-      current_password: currentPassword,
-      new_password: newPassword
-    });
-    return response.data;
-  },
+  changePassword: async () => badRequest('Not available in mock mode'),
 
   /**
    * Check if user is authenticated

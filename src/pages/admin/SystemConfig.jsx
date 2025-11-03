@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Save, RefreshCw, Database, Shield, Settings, AlertCircle } from 'lucide-react';
+import { Save, RefreshCw, Database, Shield, Settings, Eye, Activity, MapPin, Clock, HardDrive, Globe } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
-import Badge from '../../components/common/Badge';
 import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
 
@@ -18,6 +17,8 @@ const SystemConfig = () => {
     gps_accuracy_threshold: 10.0,
     max_file_size: 10485760,
     session_timeout: 1440,
+    default_latitude: 28.6139,
+    default_longitude: 77.2090,
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -59,24 +60,23 @@ const SystemConfig = () => {
     }));
   };
 
+  const maxFileSizeMb = Number((config.max_file_size / 1048576).toFixed(1));
+
   return (
     <Layout title="System Configuration">
       <div className="space-y-6">
         {/* AI Validation Thresholds */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="h-5 w-5" />
-                <span>AI Validation Thresholds</span>
-              </CardTitle>
-              <Badge variant="info">Critical Settings</Badge>
-            </div>
+            <CardTitle className="flex items-center space-x-2">
+              <Shield className="h-5 w-5" />
+              <span>AI Validation Thresholds</span>
+            </CardTitle>
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
-                label="Face Recognition Threshold"
+                label="Face Threshold"
                 type="number"
                 step="0.01"
                 min="0"
@@ -84,10 +84,11 @@ const SystemConfig = () => {
                 value={config.face_recognition_threshold}
                 onChange={(e) => handleInputChange('face_recognition_threshold', parseFloat(e.target.value))}
                 fullWidth
-                helperText="Higher values = stricter face matching (0.0 - 1.0)"
+                helperText="0.0 - 1.0 (higher = stricter)"
+                icon={Eye}
               />
               <Input
-                label="Liveness Detection Threshold"
+                label="Liveness Threshold"
                 type="number"
                 step="0.01"
                 min="0"
@@ -95,10 +96,11 @@ const SystemConfig = () => {
                 value={config.liveness_detection_threshold}
                 onChange={(e) => handleInputChange('liveness_detection_threshold', parseFloat(e.target.value))}
                 fullWidth
-                helperText="Higher values = stricter liveness detection (0.0 - 1.0)"
+                helperText="0.0 - 1.0 (higher = stricter)"
+                icon={Activity}
               />
               <Input
-                label="Background Validation Threshold"
+                label="Background Threshold"
                 type="number"
                 step="0.01"
                 min="0"
@@ -106,10 +108,11 @@ const SystemConfig = () => {
                 value={config.background_validation_threshold}
                 onChange={(e) => handleInputChange('background_validation_threshold', parseFloat(e.target.value))}
                 fullWidth
-                helperText="Higher values = stricter background validation (0.0 - 1.0)"
+                helperText="0.0 - 1.0 (higher = stricter)"
+                icon={Eye}
               />
               <Input
-                label="Audio Validation Threshold"
+                label="Audio Threshold"
                 type="number"
                 step="0.01"
                 min="0"
@@ -117,7 +120,8 @@ const SystemConfig = () => {
                 value={config.audio_validation_threshold}
                 onChange={(e) => handleInputChange('audio_validation_threshold', parseFloat(e.target.value))}
                 fullWidth
-                helperText="Higher values = stricter audio validation (0.0 - 1.0)"
+                helperText="0.0 - 1.0 (higher = stricter)"
+                icon={Activity}
               />
             </div>
           </CardBody>
@@ -126,13 +130,10 @@ const SystemConfig = () => {
         {/* General Settings */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center space-x-2">
-                <Settings className="h-5 w-5" />
-                <span>General Settings</span>
-              </CardTitle>
-              <Badge variant="success">System Settings</Badge>
-            </div>
+            <CardTitle className="flex items-center space-x-2">
+              <Settings className="h-5 w-5" />
+              <span>General Settings</span>
+            </CardTitle>
           </CardHeader>
           <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -145,6 +146,7 @@ const SystemConfig = () => {
                 onChange={(e) => handleInputChange('default_geofence_radius', parseFloat(e.target.value))}
                 fullWidth
                 helperText="Default radius for new geofence zones"
+                icon={MapPin}
               />
               <Input
                 label="GPS Accuracy Threshold (meters)"
@@ -155,16 +157,45 @@ const SystemConfig = () => {
                 onChange={(e) => handleInputChange('gps_accuracy_threshold', parseFloat(e.target.value))}
                 fullWidth
                 helperText="Maximum acceptable GPS accuracy for attendance"
+                icon={Globe}
               />
               <Input
-                label="Max File Size (bytes)"
+                label="Default Latitude"
                 type="number"
-                step="1024"
-                min="1024"
-                value={config.max_file_size}
-                onChange={(e) => handleInputChange('max_file_size', parseInt(e.target.value))}
+                step="0.000001"
+                min="-90"
+                max="90"
+                value={config.default_latitude}
+                onChange={(e) => handleInputChange('default_latitude', parseFloat(e.target.value))}
                 fullWidth
-                helperText={`Current: ${(config.max_file_size / 1024 / 1024).toFixed(1)} MB`}
+                helperText="Default latitude for new geofence zones"
+                icon={MapPin}
+              />
+              <Input
+                label="Default Longitude"
+                type="number"
+                step="0.000001"
+                min="-180"
+                max="180"
+                value={config.default_longitude}
+                onChange={(e) => handleInputChange('default_longitude', parseFloat(e.target.value))}
+                fullWidth
+                helperText="Default longitude for new geofence zones"
+                icon={MapPin}
+              />
+              <Input
+                label="Max File Size (MB)"
+                type="number"
+                step="0.1"
+                min="0.1"
+                value={maxFileSizeMb}
+                onChange={(e) => {
+                  const mb = parseFloat(e.target.value);
+                  if (!isNaN(mb)) handleInputChange('max_file_size', Math.round(mb * 1048576));
+                }}
+                fullWidth
+                helperText={`Bytes: ${config.max_file_size}`}
+                icon={HardDrive}
               />
               <Input
                 label="Session Timeout (minutes)"
@@ -175,6 +206,7 @@ const SystemConfig = () => {
                 onChange={(e) => handleInputChange('session_timeout', parseInt(e.target.value))}
                 fullWidth
                 helperText="How long sessions remain active"
+                icon={Clock}
               />
             </div>
           </CardBody>
@@ -207,25 +239,6 @@ const SystemConfig = () => {
           </CardBody>
         </Card>
 
-        {/* Warning Notice */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-amber-600 dark:text-amber-400">
-              <AlertCircle className="h-5 w-5" />
-              <span>Important Notice</span>
-            </CardTitle>
-          </CardHeader>
-          <CardBody>
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-              <p className="text-sm text-amber-800 dark:text-amber-200">
-                <strong>Warning:</strong> Changing AI validation thresholds can significantly impact attendance accuracy. 
-                Higher thresholds make the system more strict but may increase false negatives. 
-                Lower thresholds make the system more lenient but may increase false positives.
-              </p>
-            </div>
-          </CardBody>
-        </Card>
-
         {/* Save Button */}
         <div className="flex justify-end">
           <Button
@@ -244,4 +257,3 @@ const SystemConfig = () => {
 };
 
 export default SystemConfig;
-

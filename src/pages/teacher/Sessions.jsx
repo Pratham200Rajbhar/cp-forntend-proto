@@ -51,16 +51,30 @@ const Sessions = () => {
     return matchesSearch;
   });
 
+
   const columns = [
     {
       key: 'session_date',
       header: 'Date',
-      render: (value) => formatDate(value, 'MMM dd, yyyy'),
+      render: (value) => {
+        if (!value) return '';
+        try {
+          // Handle date string like "2025-01-15"
+          const dateObj = new Date(value + 'T00:00:00');
+          return formatDate(dateObj, 'MMM dd, yyyy');
+        } catch (error) {
+          return value;
+        }
+      },
     },
     {
       key: 'start_time',
       header: 'Time',
-      render: (_, row) => `${formatDate(row.start_time, 'HH:mm')} - ${formatDate(row.end_time, 'HH:mm')}`,
+      render: (_, row) => {
+        const startTime = row.start_time || '--';
+        const endTime = row.end_time || '--';
+        return `${startTime} - ${endTime}`;
+      },
     },
     {
       key: 'subject_name',
@@ -88,8 +102,8 @@ const Sessions = () => {
       ),
     },
     {
-      key: 'flagged_count',
-      header: 'Flagged',
+      key: 'suspicious_count',
+      header: 'Suspicious',
       render: (value) => (
         value > 0 ? (
           <Badge variant="warning">{value}</Badge>

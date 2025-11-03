@@ -74,7 +74,7 @@ const GeofenceManagement = () => {
       render: (value, row) => (
         <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <Navigation className="h-4 w-4 text-gray-400" />
-          <span>{row.center_latitude?.toFixed(6)}, {row.center_longitude?.toFixed(6)}</span>
+          <span>{row.center?.latitude?.toFixed?.(6)}, {row.center?.longitude?.toFixed?.(6)}</span>
         </div>
       ),
     },
@@ -84,21 +84,12 @@ const GeofenceManagement = () => {
       render: (value, row) => (
         <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <Circle className="h-4 w-4 text-gray-400" />
-          <span>{row.radius_meters}m</span>
+          <span>{row.radius}m</span>
         </div>
       ),
     },
     {
-      key: 'is_active',
-      header: 'Status',
-      render: (value) => (
-        <Badge variant={value ? 'success' : 'error'}>
-          {value ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'created_at',
+      key: 'createdAt',
       header: 'Created',
       render: (value) => (
         <span className="text-sm text-gray-700 dark:text-gray-300">
@@ -161,6 +152,9 @@ const GeofenceManagement = () => {
 
         {/* Main Content */}
         <Card>
+          <CardHeader>
+            <CardTitle>Geofence Zones</CardTitle>
+          </CardHeader>
           <CardBody>
             {/* Filters */}
             <div className="mb-6">

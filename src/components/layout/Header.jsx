@@ -28,12 +28,12 @@ const Header = ({ onMenuClick }) => {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-0 z-30">
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left section */}
         <button
           onClick={onMenuClick}
-          className="lg:hidden p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="lg:hidden p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -43,7 +43,7 @@ const Header = ({ onMenuClick }) => {
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? (
@@ -57,9 +57,9 @@ const Header = ({ onMenuClick }) => {
           <div className="relative ml-2" ref={menuRef}>
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
             >
-              <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-sm">
                 {user?.full_name?.charAt(0)?.toUpperCase() || 'U'}
               </div>
               <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -69,12 +69,12 @@ const Header = ({ onMenuClick }) => {
 
             {/* Dropdown menu */}
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 py-1 z-50">
-                <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-800">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-800 py-1 z-[60] overflow-visible">
+                <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {user?.full_name}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
                     {user?.email}
                   </p>
                 </div>
@@ -83,15 +83,15 @@ const Header = ({ onMenuClick }) => {
                     setShowProfileMenu(false);
                     navigate('/profile');
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <User className="h-4 w-4" />
                   <span>Profile</span>
                 </button>
-                <hr className="my-1 border-gray-200 dark:border-gray-800" />
+                <hr className="my-1 border-gray-100 dark:border-gray-800" />
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>

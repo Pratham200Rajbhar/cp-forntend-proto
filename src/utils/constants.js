@@ -21,7 +21,7 @@ export const API_ENDPOINTS = {
     MY_ATTENDANCE: '/api/v1/attendance/my-attendance',
     SESSION_ATTENDANCE: (sessionId) => `/api/v1/attendance/session/${sessionId}/attendance`,
     MANUAL_OVERRIDE: '/api/v1/attendance/manual-override',
-    FLAGGED: '/api/v1/attendance/flagged-attendance',
+    SUSPICIOUS: '/api/v1/attendance/suspicious-attendance',
     ATTENDANCE_REPORT: '/api/v1/attendance/attendance-report',
   },
   // Teacher - v1 API
@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
     DASHBOARD: '/api/v1/teacher/dashboard',
     SUBJECTS: '/api/v1/teacher/subjects',
     SESSIONS: '/api/v1/teacher/sessions',
-    FLAGGED_ATTENDANCE: '/api/v1/teacher/flagged-attendance',
+    SUSPICIOUS_ATTENDANCE: '/api/v1/teacher/suspicious-attendance',
     SESSION_DETAILS: (sessionId) => `/api/v1/teacher/session/${sessionId}/details`,
     GENERATE_REPORT: '/api/v1/teacher/generate-report',
     PROFILE: '/api/v1/teacher/profile',
@@ -75,7 +75,7 @@ export const USER_ROLES = {
 export const ATTENDANCE_STATUS = {
   PRESENT: 'present',
   ABSENT: 'absent',
-  FLAGGED: 'flagged',
+  SUSPICIOUS: 'suspicious',
   PENDING: 'pending',
 };
 
@@ -83,7 +83,7 @@ export const ATTENDANCE_STATUS = {
 export const STATUS_COLORS = {
   present: 'success',
   absent: 'error',
-  flagged: 'warning',
+  suspicious: 'warning',
   pending: 'info',
 };
 

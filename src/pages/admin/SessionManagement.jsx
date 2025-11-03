@@ -30,10 +30,7 @@ const SessionManagement = () => {
   const fetchSessions = async () => {
     try {
       setLoading(true);
-      const data = await adminService.getSessions({ 
-        subject_id: selectedSubject || undefined,
-        limit: 100 
-      });
+      const data = await adminService.getSessions();
       setSessions(data);
     } catch (error) {
       toast.error('Failed to load sessions');
@@ -54,7 +51,7 @@ const SessionManagement = () => {
 
   const fetchGeofenceZones = async () => {
     try {
-      const data = await adminService.getGeofenceZones({ limit: 100 });
+      const data = await adminService.getGeofenceZones();
       setGeofenceZones(data);
     } catch (error) {
       console.error('Geofence zones error:', error);
@@ -75,13 +72,13 @@ const SessionManagement = () => {
   };
 
   const filteredSessions = sessions.filter(session =>
-    session.session_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    session.subject?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    session.session?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    session.subject?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const columns = [
     {
-      key: 'session_name',
+      key: 'session',
       header: 'Session',
       render: (value, row) => (
         <div className="flex items-center gap-3">
@@ -89,18 +86,18 @@ const SessionManagement = () => {
             <Calendar className="h-5 w-5 text-green-600 dark:text-green-400" />
           </div>
           <div>
-            <p className="font-medium text-gray-900 dark:text-gray-100">{value}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{row.subject?.name}</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">{row.session || 'Untitled Session'}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{row.subject || 'No Subject'}</p>
           </div>
         </div>
       ),
     },
     {
-      key: 'session_date',
+      key: 'date',
       header: 'Date',
-      render: (value) => (
+      render: (value, row) => (
         <span className="text-sm text-gray-700 dark:text-gray-300">
-          {formatDate(value, 'MMM dd, yyyy')}
+          {formatDate(row.date, 'MMM dd, yyyy')}
         </span>
       ),
     },
@@ -111,32 +108,41 @@ const SessionManagement = () => {
         <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
           <Clock className="h-4 w-4 text-gray-400" />
           <span>
-            {row.start_time?.split('T')[1]?.substring(0, 5)} - {row.end_time?.split('T')[1]?.substring(0, 5)}
+            {row.startTime} - {row.endTime}
           </span>
         </div>
       ),
     },
     {
-      key: 'geofence_zone',
+      key: 'room',
       header: 'Location',
-      render: (value, row) => {
-        const zone = geofenceZones.find(z => z.id === row.geofence_zone_id);
-        return zone ? (
-          <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-            <MapPin className="h-4 w-4 text-gray-400" />
-            <span>{zone.name}</span>
-          </div>
-        ) : (
-          <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
-        );
-      },
+      render: (value, row) => (
+        <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+          <MapPin className="h-4 w-4 text-gray-400" />
+          <span>{row.room || 'No Location'}</span>
+        </div>
+      ),
     },
     {
-      key: 'is_active',
+      key: 'attendance',
+      header: 'Attendance',
+      render: (value, row) => (
+        <div className="text-center">
+          <div className="text-sm font-medium text-gray-900 dark:text-white">
+            {row.present?.length || 0} / {(row.present?.length || 0) + (row.absent?.length || 0)}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            {row.attendanceRate || 0}%
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'status',
       header: 'Status',
       render: (value) => (
-        <Badge variant={value ? 'success' : 'error'}>
-          {value ? 'Active' : 'Inactive'}
+        <Badge variant={value === 'completed' ? 'success' : value === 'scheduled' ? 'warning' : 'error'}>
+          {value === 'completed' ? 'Completed' : value === 'scheduled' ? 'Scheduled' : 'Inactive'}
         </Badge>
       ),
     },

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, Search, Edit, Trash2, BookOpen, Mail, Phone } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
-import Card, { CardBody } from '../../components/common/Card';
+import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Table from '../../components/common/Table';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
@@ -109,16 +109,7 @@ const TeacherManagement = () => {
       ),
     },
     {
-      key: 'is_active',
-      header: 'Status',
-      render: (value) => (
-        <Badge variant={value ? 'success' : 'error'} size="sm">
-          {value ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'created_at',
+      key: 'createdAt',
       header: 'Joined',
       render: (value) => (
         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -181,6 +172,9 @@ const TeacherManagement = () => {
 
         {/* Main Content */}
         <Card>
+          <CardHeader>
+            <CardTitle>Teachers</CardTitle>
+          </CardHeader>
           <CardBody>
             {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

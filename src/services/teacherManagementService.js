@@ -1,5 +1,5 @@
-import api from './api';
-import { API_ENDPOINTS } from '../utils/constants';
+import { ok } from './mockUtils';
+import { mockUsers, mockSessions, mockSubjects } from './mockData';
 
 const teacherManagementService = {
   /**
@@ -7,84 +7,49 @@ const teacherManagementService = {
    * GET /api/v1/admin/users?role=teacher
    */
   getTeachers: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.USERS, {
-      params: {
-        ...params,
-        role: 'teacher',
-      },
-    });
-    return response.data;
+    const { q } = params;
+    const teachers = mockUsers.filter((u) => u.role === 'teacher');
+    const filtered = q
+      ? teachers.filter((t) => [t.name, t.email].some((f) => f.toLowerCase().includes(q.toLowerCase())))
+      : teachers;
+    return ok(filtered);
   },
 
   /**
    * Get teacher by ID (Admin only)
    * GET /api/v1/admin/users/{user_id}
    */
-  getTeacherById: async (teacherId) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.USER_BY_ID(teacherId));
-    return response.data;
-  },
+  getTeacherById: async (teacherId) => ok(mockUsers.find((u) => u.id === teacherId) || null),
 
   /**
    * Create a new teacher (Admin only)
    * POST /api/v1/admin/users
    */
-  createTeacher: async (teacherData) => {
-    const response = await api.post(API_ENDPOINTS.ADMIN.USERS, {
-      ...teacherData,
-      role: 'teacher'
-    });
-    return response.data;
-  },
+  createTeacher: async (teacherData) => ok({ ...teacherData, id: teacherData.id || 'NEW-TEACH' }),
 
   /**
    * Update teacher information (Admin only)
    * PUT /api/v1/admin/users/{user_id}
    */
-  updateTeacher: async (teacherId, teacherData) => {
-    const response = await api.put(API_ENDPOINTS.ADMIN.USER_BY_ID(teacherId), {
-      ...teacherData,
-      role: 'teacher'
-    });
-    return response.data;
-  },
+  updateTeacher: async (teacherId, teacherData) => ok({ ...teacherData, id: teacherId }),
 
   /**
    * Delete teacher (Admin only)
    * DELETE /api/v1/admin/users/{user_id}
    */
-  deleteTeacher: async (teacherId) => {
-    const response = await api.delete(API_ENDPOINTS.ADMIN.USER_BY_ID(teacherId));
-    return response.data;
-  },
+  deleteTeacher: async (teacherId) => ok({ success: true, id: teacherId }),
 
   /**
    * Get teacher's subjects (Admin only)
    * GET /api/v1/admin/subjects?teacher_id={teacher_id}
    */
-  getTeacherSubjects: async (teacherId, params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SUBJECTS, {
-      params: {
-        ...params,
-        teacher_id: teacherId,
-      },
-    });
-    return response.data;
-  },
+  getTeacherSubjects: async () => ok(mockSubjects),
 
   /**
    * Get teacher's sessions (Admin only)
    * GET /api/v1/admin/sessions?teacher_id={teacher_id}
    */
-  getTeacherSessions: async (teacherId, params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SESSIONS, {
-      params: {
-        ...params,
-        teacher_id: teacherId,
-      },
-    });
-    return response.data;
-  },
+  getTeacherSessions: async () => ok(mockSessions),
 };
 
 export default teacherManagementService;

@@ -1,5 +1,5 @@
-import api from './api';
-import { API_ENDPOINTS } from '../utils/constants';
+import { ok } from './mockUtils';
+import { mockSubjects, mockSessions, mockStudents, mockSystem, mockGeofences } from './mockData';
 
 const adminService = {
 
@@ -8,195 +8,137 @@ const adminService = {
    * Get all subjects (Admin only)
    * GET /api/v1/admin/subjects
    */
-  getSubjects: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SUBJECTS, { params });
-    return response.data;
-  },
+  getSubjects: async () => ok(mockSubjects),
 
   /**
    * Get subject by ID (Admin only)
    * GET /api/v1/admin/subjects/{subject_id}
    */
-  getSubjectById: async (subjectId) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SUBJECT_BY_ID(subjectId));
-    return response.data;
-  },
+  getSubjectById: async (subjectId) => ok(mockSubjects.find((s) => s.id === subjectId) || null),
 
   /**
    * Create a new subject (Admin only)
    * POST /api/v1/admin/subjects
    */
-  createSubject: async (subjectData) => {
-    const response = await api.post(API_ENDPOINTS.ADMIN.SUBJECTS, subjectData);
-    return response.data;
-  },
+  createSubject: async (subjectData) => ok({ ...subjectData, id: subjectData.id || 'NEW-SUBJ' }),
 
   /**
    * Update subject (Admin only)
    * PUT /api/v1/admin/subjects/{subject_id}
    */
-  updateSubject: async (subjectId, subjectData) => {
-    const response = await api.put(API_ENDPOINTS.ADMIN.SUBJECT_BY_ID(subjectId), subjectData);
-    return response.data;
-  },
+  updateSubject: async (subjectId, subjectData) => ok({ ...subjectData, id: subjectId }),
 
   /**
    * Delete subject (Admin only)
    * DELETE /api/v1/admin/subjects/{subject_id}
    */
-  deleteSubject: async (subjectId) => {
-    const response = await api.delete(API_ENDPOINTS.ADMIN.SUBJECT_BY_ID(subjectId));
-    return response.data;
-  },
+  deleteSubject: async (subjectId) => ok({ success: true, id: subjectId }),
 
   // Session Management (Admin only)
   /**
    * Get all sessions (Admin only)
    * GET /api/v1/admin/sessions
    */
-  getSessions: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SESSIONS, { params });
-    return response.data;
-  },
+  getSessions: async () => ok(mockSessions),
 
   /**
    * Get session by ID (Admin only)
    * GET /api/v1/admin/sessions/{session_id}
    */
-  getSessionById: async (sessionId) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.SESSION_BY_ID(sessionId));
-    return response.data;
-  },
+  getSessionById: async (sessionId) => ok(mockSessions.find((s) => s.id === sessionId) || null),
 
   /**
    * Create a new session (Admin only)
    * POST /api/v1/admin/sessions
    */
-  createSession: async (sessionData) => {
-    const response = await api.post(API_ENDPOINTS.ADMIN.SESSIONS, sessionData);
-    return response.data;
-  },
+  createSession: async (sessionData) => ok({ ...sessionData, id: 'NEW-SESSION' }),
 
   /**
    * Update session (Admin only)
    * PUT /api/v1/admin/sessions/{session_id}
    */
-  updateSession: async (sessionId, sessionData) => {
-    const response = await api.put(API_ENDPOINTS.ADMIN.SESSION_BY_ID(sessionId), sessionData);
-    return response.data;
-  },
+  updateSession: async (sessionId, sessionData) => ok({ ...sessionData, id: sessionId }),
 
   /**
    * Delete session (Admin only)
    * DELETE /api/v1/admin/sessions/{session_id}
    */
-  deleteSession: async (sessionId) => {
-    const response = await api.delete(API_ENDPOINTS.ADMIN.SESSION_BY_ID(sessionId));
-    return response.data;
-  },
+  deleteSession: async (sessionId) => ok({ success: true, id: sessionId }),
 
   // Geofence Zone Management (Admin only)
   /**
    * Get all geofence zones (Admin only)
    * GET /api/v1/admin/geofence-zones
    */
-  getGeofenceZones: async (params = {}) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.GEOFENCE_ZONES, { params });
-    return response.data;
-  },
+  getGeofenceZones: async () => ok(mockGeofences),
 
   /**
    * Get geofence zone by ID (Admin only)
    * GET /api/v1/admin/geofence-zones/{zone_id}
    */
-  getGeofenceZoneById: async (zoneId) => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.GEOFENCE_ZONE_BY_ID(zoneId));
-    return response.data;
-  },
+  getGeofenceZoneById: async (zoneId) => ok(mockGeofences.find((z) => z.id === zoneId) || null),
 
   /**
    * Create a new geofence zone (Admin only)
    * POST /api/v1/admin/geofence-zones
    */
-  createGeofenceZone: async (zoneData) => {
-    const response = await api.post(API_ENDPOINTS.ADMIN.GEOFENCE_ZONES, zoneData);
-    return response.data;
-  },
+  createGeofenceZone: async (zoneData) => ok({ ...zoneData, id: 'NEW-GF' }),
 
   /**
    * Update geofence zone (Admin only)
    * PUT /api/v1/admin/geofence-zones/{zone_id}
    */
-  updateGeofenceZone: async (zoneId, zoneData) => {
-    const response = await api.put(API_ENDPOINTS.ADMIN.GEOFENCE_ZONE_BY_ID(zoneId), zoneData);
-    return response.data;
-  },
+  updateGeofenceZone: async (zoneId, zoneData) => ok({ ...zoneData, id: zoneId }),
 
   /**
    * Delete geofence zone (Admin only)
    * DELETE /api/v1/admin/geofence-zones/{zone_id}
    */
-  deleteGeofenceZone: async (zoneId) => {
-    const response = await api.delete(API_ENDPOINTS.ADMIN.GEOFENCE_ZONE_BY_ID(zoneId));
-    return response.data;
-  },
+  deleteGeofenceZone: async (zoneId) => ok({ success: true, id: zoneId }),
 
   // System Statistics (Admin only)
   /**
    * Get system statistics (Admin only)
    * GET /api/v1/admin/stats
    */
-  getSystemStats: async () => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.STATS);
-    return response.data;
-  },
+  getSystemStats: async () => ok({
+    total_students: mockSystem.stats.totalStudents,
+    total_teachers: mockSystem.stats.totalTeachers,
+    total_subjects: (mockSubjects || []).length,
+    total_sessions: (mockSessions || []).length,
+  }),
 
   /**
    * Get attendance overview (Admin only)
    * GET /api/v1/admin/attendance-overview
    */
-  getAttendanceOverview: async () => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.ATTENDANCE_OVERVIEW);
-    return response.data;
-  },
+  getAttendanceOverview: async () => ok({ bySubject: mockSubjects.map((s) => ({ subject: s.name, rate: 85 })) }),
 
   /**
    * Get system health status (Admin only)
    * GET /api/v1/admin/health
    */
-  getSystemHealth: async () => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.HEALTH);
-    return response.data;
-  },
+  getSystemHealth: async () => ok(mockSystem.health),
 
   // System Configuration (Admin only)
   /**
    * Get system configuration (Admin only)
    * GET /api/v1/admin/config
    */
-  getSystemConfig: async () => {
-    const response = await api.get(API_ENDPOINTS.ADMIN.CONFIG);
-    return response.data;
-  },
+  getSystemConfig: async () => ok(mockSystem.config),
 
   /**
    * Update system configuration (Admin only)
    * PUT /api/v1/admin/config
    */
-  updateSystemConfig: async (configData) => {
-    const response = await api.put(API_ENDPOINTS.ADMIN.CONFIG, configData);
-    return response.data;
-  },
+  updateSystemConfig: async (configData) => ok({ ...mockSystem.config, ...configData }),
 
   // System Backup (Admin only)
   /**
    * Create system backup (Admin only)
    * POST /api/v1/admin/backup
    */
-  createBackup: async (backupData) => {
-    const response = await api.post(API_ENDPOINTS.ADMIN.BACKUP, backupData);
-    return response.data;
-  },
+  createBackup: async () => ok({ success: true, file: 'mock-backup.tar.gz' }),
 };
 
 export default adminService;

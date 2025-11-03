@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, Search, Edit, Trash2, GraduationCap, Mail, Phone } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
-import Card, { CardBody } from '../../components/common/Card';
+import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Table from '../../components/common/Table';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
@@ -103,6 +103,13 @@ const StudentManagement = () => {
       ),
     },
     {
+      key: 'yearSection',
+      header: 'Year / Section',
+      render: (_, row) => (
+        <span className="text-sm text-gray-700 dark:text-gray-300">{row.year || '-'} / {row.section || '-'}</span>
+      ),
+    },
+    {
       key: 'department',
       header: 'Department',
       render: (value) => (
@@ -110,16 +117,7 @@ const StudentManagement = () => {
       ),
     },
     {
-      key: 'is_active',
-      header: 'Status',
-      render: (value) => (
-        <Badge variant={value ? 'success' : 'error'} size="sm">
-          {value ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
-    },
-    {
-      key: 'created_at',
+      key: 'createdAt',
       header: 'Enrolled',
       render: (value) => (
         <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -182,6 +180,9 @@ const StudentManagement = () => {
 
         {/* Main Content */}
         <Card>
+          <CardHeader>
+            <CardTitle>Students</CardTitle>
+          </CardHeader>
           <CardBody>
             {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

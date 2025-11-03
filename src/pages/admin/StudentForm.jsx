@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, User, Hash, Mail, Lock, Phone, Building2, Calendar, Users } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -18,6 +18,8 @@ const studentSchema = z.object({
   full_name: z.string().min(1, 'Full name is required'),
   password: z.string().min(6, 'Password must be at least 6 characters').optional(),
   department: z.string().min(1, 'Department is required'),
+  year: z.string().min(1, 'Year is required'),
+  section: z.string().min(1, 'Section is required'),
   phone_number: z.string().optional(),
   student_id: z.string().min(1, 'Student ID is required'),
   is_active: z.boolean().optional(),
@@ -84,6 +86,8 @@ const StudentForm = () => {
     'Physics',
     'Chemistry',
   ];
+  const years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+  const sections = ['A', 'B', 'C', 'D'];
 
   return (
     <Layout title={isEdit ? 'Edit Student' : 'Add Student'}>
@@ -113,6 +117,7 @@ const StudentForm = () => {
                   <Input
                     label="Full Name"
                     placeholder="John Doe"
+                    icon={User}
                     error={errors.full_name?.message}
                     fullWidth
                     {...register('full_name')}
@@ -120,6 +125,7 @@ const StudentForm = () => {
                   <Input
                     label="Student ID"
                     placeholder="STU001"
+                    icon={Hash}
                     error={errors.student_id?.message}
                     fullWidth
                     {...register('student_id')}
@@ -136,6 +142,7 @@ const StudentForm = () => {
                   <Input
                     label="Username"
                     placeholder="johndoe"
+                    icon={User}
                     error={errors.username?.message}
                     fullWidth
                     {...register('username')}
@@ -144,6 +151,7 @@ const StudentForm = () => {
                     label={isEdit ? 'Password (leave blank to keep current)' : 'Password'}
                     type="password"
                     placeholder="••••••••"
+                    icon={Lock}
                     error={errors.password?.message}
                     fullWidth
                     {...register('password')}
@@ -161,6 +169,7 @@ const StudentForm = () => {
                     label="Email"
                     type="email"
                     placeholder="john@university.edu"
+                    icon={Mail}
                     error={errors.email?.message}
                     fullWidth
                     {...register('email')}
@@ -168,6 +177,7 @@ const StudentForm = () => {
                   <Input
                     label="Phone Number"
                     placeholder="+1234567890"
+                    icon={Phone}
                     error={errors.phone_number?.message}
                     fullWidth
                     {...register('phone_number')}
@@ -183,10 +193,27 @@ const StudentForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Select
                     label="Department"
+                    icon={Building2}
                     error={errors.department?.message}
                     fullWidth
                     {...register('department')}
                     options={departments.map(dept => ({ value: dept, label: dept }))}
+                  />
+                  <Select
+                    label="Year"
+                    icon={Calendar}
+                    error={errors.year?.message}
+                    fullWidth
+                    {...register('year')}
+                    options={years.map(y => ({ value: y, label: y }))}
+                  />
+                  <Select
+                    label="Section"
+                    icon={Users}
+                    error={errors.section?.message}
+                    fullWidth
+                    {...register('section')}
+                    options={sections.map(s => ({ value: s, label: s }))}
                   />
                   <div className="flex items-end">
                     <div className="flex items-center space-x-2 h-10">

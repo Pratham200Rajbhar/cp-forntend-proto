@@ -1,24 +1,18 @@
-import api from './api';
-import { API_ENDPOINTS } from '../utils/constants';
+import { ok } from './mockUtils';
+import { mockSystem } from './mockData';
 
 const systemService = {
   /**
    * Basic health check endpoint
    * GET /health
    */
-  getHealth: async () => {
-    const response = await api.get(API_ENDPOINTS.HEALTH);
-    return response.data;
-  },
+  getHealth: async () => ok(mockSystem.health),
 
   /**
    * API information endpoint
    * GET /
    */
-  getApiInfo: async () => {
-    const response = await api.get(API_ENDPOINTS.ROOT);
-    return response.data;
-  },
+  getApiInfo: async () => ok({ name: 'SmartAttend (Mock)', version: '1.0.0' }),
 };
 
 export default systemService;

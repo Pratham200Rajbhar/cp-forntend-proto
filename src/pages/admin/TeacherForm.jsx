@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -112,6 +112,7 @@ const TeacherForm = () => {
                   <Input
                     label="Full Name"
                     placeholder="Dr. Jane Smith"
+                    icon={User}
                     error={errors.full_name?.message}
                     fullWidth
                     {...register('full_name')}
@@ -119,6 +120,7 @@ const TeacherForm = () => {
                   <Input
                     label="Username"
                     placeholder="janesmith"
+                    icon={User}
                     error={errors.username?.message}
                     fullWidth
                     {...register('username')}
@@ -136,6 +138,7 @@ const TeacherForm = () => {
                     label="Email"
                     type="email"
                     placeholder="jane@university.edu"
+                    icon={Mail}
                     error={errors.email?.message}
                     fullWidth
                     {...register('email')}
@@ -144,6 +147,7 @@ const TeacherForm = () => {
                     label={isEdit ? 'Password (leave blank to keep current)' : 'Password'}
                     type="password"
                     placeholder="••••••••"
+                    icon={Lock}
                     error={errors.password?.message}
                     fullWidth
                     {...register('password')}
@@ -160,12 +164,14 @@ const TeacherForm = () => {
                   <Input
                     label="Phone Number"
                     placeholder="+1234567890"
+                    icon={Phone}
                     error={errors.phone_number?.message}
                     fullWidth
                     {...register('phone_number')}
                   />
                   <Select
                     label="Department"
+                    icon={Building2}
                     error={errors.department?.message}
                     fullWidth
                     {...register('department')}
@@ -173,6 +179,7 @@ const TeacherForm = () => {
                   />
                 </div>
               </div>
+
 
               {/* Status */}
               <div>

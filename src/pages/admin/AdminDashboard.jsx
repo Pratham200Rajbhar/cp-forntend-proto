@@ -13,6 +13,7 @@ import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/C
 import Button from '../../components/common/Button';
 import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
+import { ProgressChart, StatsGrid, DonutChart, SimpleLineChart } from '../../components/common/Chart';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -74,21 +75,92 @@ const AdminDashboard = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Welcome */}
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            System overview and management
-          </p>
+        {/* Welcome Header */}
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                Admin Dashboard
+              </h1>
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                System overview and management
+              </p>
+            </div>
+            <div className="hidden md:block">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                <CheckSquare className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Stats */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {statsCards.map((stat, index) => (
             <StatCard key={index} {...stat} />
           ))}
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Department Performance */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Department Performance</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <ProgressChart
+                data={[
+                  { label: 'Computer Science', value: 88 },
+                  { label: 'Information Technology', value: 82 },
+                  { label: 'Electronics', value: 85 },
+                  { label: 'Mechanical', value: 79 }
+                ]}
+                title="Attendance by Department"
+              />
+            </CardBody>
+          </Card>
+
+          {/* System Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle>System Overview</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <StatsGrid
+                data={[
+                  { label: 'Active Users', value: '1,200' },
+                  { label: 'Today\'s Sessions', value: '45' },
+                  { label: 'System Uptime', value: '99.9%' },
+                  { label: 'Data Processed', value: '2.4GB' }
+                ]}
+              />
+            </CardBody>
+          </Card>
+
+          {/* Weekly Attendance Trend */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Weekly Attendance Trend</CardTitle>
+            </CardHeader>
+            <CardBody>
+              <SimpleLineChart
+                data={[
+                  { x: 0, y: 72 },
+                  { x: 1, y: 81 },
+                  { x: 2, y: 79 },
+                  { x: 3, y: 88 },
+                  { x: 4, y: 90 },
+                  { x: 5, y: 85 },
+                  { x: 6, y: 83 }
+                ]}
+                color="#3b82f6"
+              />
+              <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+                Last 7 days attendance percentage
+              </div>
+            </CardBody>
+          </Card>
         </div>
 
         {/* Quick Actions */}
