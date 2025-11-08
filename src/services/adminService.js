@@ -8,13 +8,42 @@ const adminService = {
    * Get all subjects (Admin only)
    * GET /api/v1/admin/subjects
    */
-  getSubjects: async () => ok(mockSubjects),
+  getSubjects: async (params = {}) => {
+    const { teacher_id, q, limit } = params;
+    let subjects = [...mockSubjects];
+    
+    // Filter by teacher_id if provided
+    if (teacher_id) {
+      subjects = subjects.filter((s) => s.teacher_id === teacher_id);
+    }
+    
+    // Filter by search query if provided
+    if (q) {
+      subjects = subjects.filter((s) => 
+        [s.name, s.code, s.description].some((f) => 
+          f && f.toLowerCase().includes(q.toLowerCase())
+        )
+      );
+    }
+    
+    // Apply limit if provided
+    if (limit) {
+      subjects = subjects.slice(0, limit);
+    }
+    
+    return ok(subjects);
+  },
 
   /**
    * Get subject by ID (Admin only)
    * GET /api/v1/admin/subjects/{subject_id}
    */
   getSubjectById: async (subjectId) => ok(mockSubjects.find((s) => s.id === subjectId) || null),
+  
+  /**
+   * Alias for getSubjectById (for compatibility)
+   */
+  getSubject: async (subjectId) => ok(mockSubjects.find((s) => s.id === subjectId) || null),
 
   /**
    * Create a new subject (Admin only)

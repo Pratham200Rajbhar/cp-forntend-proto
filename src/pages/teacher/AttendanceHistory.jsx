@@ -35,8 +35,8 @@ const AttendanceHistory = () => {
   const studentData = [
     {
       id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
+      name: 'Aarav Verma',
+      email: 'aarav.verma@students.iitm.ac.in',
       totalSessions: 15,
       present: 13,
       absent: 1,
@@ -45,13 +45,33 @@ const AttendanceHistory = () => {
     },
     {
       id: 2,
-      name: 'Jane Smith',
-      email: 'jane@example.com',
+      name: 'Diya Gupta',
+      email: 'diya.gupta@students.iitm.ac.in',
       totalSessions: 15,
       present: 15,
       absent: 0,
       suspicious: 0,
       rate: 100,
+    },
+    {
+      id: 3,
+      name: 'Kabir Nair',
+      email: 'kabir.nair@students.iitm.ac.in',
+      totalSessions: 15,
+      present: 14,
+      absent: 1,
+      suspicious: 0,
+      rate: 93.3,
+    },
+    {
+      id: 4,
+      name: 'Priya Patel',
+      email: 'priya.patel@students.iitm.ac.in',
+      totalSessions: 15,
+      present: 12,
+      absent: 2,
+      suspicious: 1,
+      rate: 80.0,
     },
   ];
 

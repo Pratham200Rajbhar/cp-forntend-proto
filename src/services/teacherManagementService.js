@@ -7,12 +7,24 @@ const teacherManagementService = {
    * GET /api/v1/admin/users?role=teacher
    */
   getTeachers: async (params = {}) => {
-    const { q } = params;
-    const teachers = mockUsers.filter((u) => u.role === 'teacher');
-    const filtered = q
-      ? teachers.filter((t) => [t.name, t.email].some((f) => f.toLowerCase().includes(q.toLowerCase())))
-      : teachers;
-    return ok(filtered);
+    const { q, department } = params;
+    let teachers = mockUsers.filter((u) => u.role === 'teacher');
+    
+    // Filter by department if provided
+    if (department) {
+      teachers = teachers.filter((t) => t.department === department);
+    }
+    
+    // Filter by search query if provided
+    if (q) {
+      teachers = teachers.filter((t) => 
+        [t.name, t.full_name, t.email, t.username].some((f) => 
+          f && f.toLowerCase().includes(q.toLowerCase())
+        )
+      );
+    }
+    
+    return ok(teachers);
   },
 
   /**
@@ -20,6 +32,11 @@ const teacherManagementService = {
    * GET /api/v1/admin/users/{user_id}
    */
   getTeacherById: async (teacherId) => ok(mockUsers.find((u) => u.id === teacherId) || null),
+  
+  /**
+   * Alias for getTeacherById (for compatibility)
+   */
+  getTeacher: async (teacherId) => ok(mockUsers.find((u) => u.id === teacherId) || null),
 
   /**
    * Create a new teacher (Admin only)

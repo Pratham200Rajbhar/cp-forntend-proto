@@ -62,11 +62,14 @@ const ManualAttendance = () => {
     try {
       // Mock data - replace with actual API call
       const mockStudents = [
-        { id: 1, name: 'John Doe', email: 'john@example.com', student_id: 'STU001' },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', student_id: 'STU002' },
-        { id: 3, name: 'Bob Johnson', email: 'bob@example.com', student_id: 'STU003' },
-        { id: 4, name: 'Alice Williams', email: 'alice@example.com', student_id: 'STU004' },
-        { id: 5, name: 'Charlie Brown', email: 'charlie@example.com', student_id: 'STU005' },
+        { id: 1, name: 'Aarav Verma', email: 'aarav.verma@students.iitm.ac.in', student_id: '23CS001' },
+        { id: 2, name: 'Diya Gupta', email: 'diya.gupta@students.iitm.ac.in', student_id: '23CS002' },
+        { id: 3, name: 'Kabir Nair', email: 'kabir.nair@students.iitm.ac.in', student_id: '23CS003' },
+        { id: 4, name: 'Priya Patel', email: 'priya.patel@students.iitm.ac.in', student_id: '23CS004' },
+        { id: 5, name: 'Arjun Singh', email: 'arjun.singh@students.iitm.ac.in', student_id: '23CS005' },
+        { id: 6, name: 'Sneha Reddy', email: 'sneha.reddy@students.iitm.ac.in', student_id: '23CS006' },
+        { id: 7, name: 'Vikram Kumar', email: 'vikram.kumar@students.iitm.ac.in', student_id: '23CS007' },
+        { id: 8, name: 'Ananya Sharma', email: 'ananya.sharma@students.iitm.ac.in', student_id: '23CS008' },
       ];
       setStudents(mockStudents);
     } catch (error) {
