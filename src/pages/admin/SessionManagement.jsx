@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit, Trash2, Calendar, Clock, MapPin } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Table from '../../components/common/Table';
@@ -8,67 +9,68 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import Badge from '../../components/common/Badge';
-import adminService from '../../services/adminService';
 import { formatDate } from '../../utils/helpers';
-import toast from 'react-hot-toast';
 
 const SessionManagement = () => {
   const navigate = useNavigate();
-  const [sessions, setSessions] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [geofenceZones, setGeofenceZones] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
 
-  useEffect(() => {
-    fetchSessions();
-    fetchSubjects();
-    fetchGeofenceZones();
-  }, [selectedSubject]);
-
-  const fetchSessions = async () => {
-    try {
-      setLoading(true);
-      const data = await adminService.getSessions();
-      setSessions(data);
-    } catch (error) {
-      toast.error('Failed to load sessions');
-      console.error('Sessions error:', error);
-    } finally {
-      setLoading(false);
+  // Mock data (Session and Subject APIs not documented in API_DOCUMENTATION.md)
+  const mockSessions = [
+    {
+      _id: '1',
+      subject: { _id: '1', name: 'Data Structures', code: 'CS201' },
+      teacher: { name: 'Dr. Smith', employee_id: 'EMP001' },
+      date: new Date().toISOString(),
+      start_time: '09:00',
+      end_time: '10:30',
+      location: { name: 'Room 101', building: 'Main Building' },
+      geofence: { name: 'Main Campus', radius: 100 },
+      status: 'scheduled',
+      attendance_count: 0
+    },
+    {
+      _id: '2',
+      subject: { _id: '2', name: 'Algorithms', code: 'CS202' },
+      teacher: { name: 'Prof. Johnson', employee_id: 'EMP002' },
+      date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      start_time: '11:00',
+      end_time: '12:30',
+      location: { name: 'Lab 2', building: 'CS Building' },
+      geofence: { name: 'CS Department', radius: 50 },
+      status: 'scheduled',
+      attendance_count: 0
+    },
+    {
+      _id: '3',
+      subject: { _id: '3', name: 'Database Systems', code: 'CS301' },
+      teacher: { name: 'Dr. Williams', employee_id: 'EMP003' },
+      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      start_time: '14:00',
+      end_time: '15:30',
+      location: { name: 'Room 205', building: 'Main Building' },
+      geofence: { name: 'Main Campus', radius: 100 },
+      status: 'completed',
+      attendance_count: 42
     }
-  };
+  ];
 
-  const fetchSubjects = async () => {
-    try {
-      const data = await adminService.getSubjects({ limit: 100 });
-      setSubjects(data);
-    } catch (error) {
-      console.error('Subjects error:', error);
-    }
-  };
+  const mockSubjects = [
+    { _id: '1', name: 'Data Structures', code: 'CS201' },
+    { _id: '2', name: 'Algorithms', code: 'CS202' },
+    { _id: '3', name: 'Database Systems', code: 'CS301' },
+    { _id: '4', name: 'Operating Systems', code: 'CS302' },
+    { _id: '5', name: 'Computer Networks', code: 'CS303' }
+  ];
 
-  const fetchGeofenceZones = async () => {
-    try {
-      const data = await adminService.getGeofenceZones();
-      setGeofenceZones(data);
-    } catch (error) {
-      console.error('Geofence zones error:', error);
-    }
-  };
+  const [sessions, setSessions] = useState(mockSessions);
+  const subjects = mockSubjects;
 
-  const handleDelete = async (sessionId) => {
+  const handleDelete = (sessionId) => {
     if (!confirm('Are you sure you want to delete this session?')) return;
-
-    try {
-      await adminService.deleteSession(sessionId);
-      toast.success('Session deleted successfully');
-      fetchSessions();
-    } catch (error) {
-      toast.error('Failed to delete session');
-      console.error('Delete error:', error);
-    }
+    setSessions(sessions.filter(s => s._id !== sessionId));
+    toast.success('Session deleted successfully');
   };
 
   const filteredSessions = sessions.filter(session =>
@@ -235,7 +237,6 @@ const SessionManagement = () => {
             <Table
               columns={columns}
               data={filteredSessions}
-              loading={loading}
               emptyMessage="No sessions found"
             />
           </CardBody>

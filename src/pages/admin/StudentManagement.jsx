@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, Search, Edit, Trash2, GraduationCap, Mail, Phone } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
@@ -8,8 +8,8 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import Badge from '../../components/common/Badge';
-import studentService from '../../services/studentService';
 import { formatDate } from '../../utils/helpers';
+import { studentService } from '../../services/api';
 import toast from 'react-hot-toast';
 
 const StudentManagement = () => {
@@ -21,19 +21,16 @@ const StudentManagement = () => {
 
   useEffect(() => {
     fetchStudents();
-  }, [selectedDepartment]);
+  }, []);
 
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const data = await studentService.getStudents({ 
-        department: selectedDepartment || undefined,
-        limit: 100 
-      });
+      const data = await studentService.getAll();
       setStudents(data);
     } catch (error) {
+      console.error('Failed to fetch students:', error);
       toast.error('Failed to load students');
-      console.error('Students error:', error);
     } finally {
       setLoading(false);
     }
@@ -43,12 +40,12 @@ const StudentManagement = () => {
     if (!confirm('Are you sure you want to delete this student?')) return;
 
     try {
-      await studentService.deleteStudent(studentId);
+      await studentService.delete(studentId);
       toast.success('Student deleted successfully');
-      fetchStudents();
+      fetchStudents(); // Refresh list
     } catch (error) {
-      toast.error('Failed to delete student');
       console.error('Delete error:', error);
+      toast.error('Failed to delete student');
     }
   };
 

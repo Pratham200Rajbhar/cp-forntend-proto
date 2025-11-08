@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { STORAGE_KEYS } from '../utils/constants';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {

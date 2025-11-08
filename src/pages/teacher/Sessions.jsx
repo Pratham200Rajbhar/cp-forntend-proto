@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Search, Filter, Download } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
@@ -8,46 +8,75 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import Badge from '../../components/common/Badge';
-import teacherService from '../../services/teacherService';
 import { formatDate, formatPercentage } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 
 const Sessions = () => {
   const navigate = useNavigate();
-  const [sessions, setSessions] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedSubject, selectedStatus]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [sessionsData, subjectsData] = await Promise.all([
-        teacherService.getSessions({ 
-          subject_id: selectedSubject || undefined,
-          limit: 100 
-        }),
-        teacherService.getSubjects()
-      ]);
-      setSessions(sessionsData);
-      setSubjects(subjectsData);
-    } catch (error) {
-      toast.error('Failed to load sessions');
-      console.error('Sessions error:', error);
-    } finally {
-      setLoading(false);
+  // Mock data (Session and Subject APIs not documented in API_DOCUMENTATION.md)
+  const mockSessions = [
+    {
+      _id: '1',
+      subject: { name: 'Data Structures', code: 'CS201' },
+      date: new Date().toISOString(),
+      start_time: '09:00',
+      end_time: '10:30',
+      location: { name: 'Room 101', building: 'Main Building' },
+      status: 'scheduled',
+      total_students: 45,
+      present_count: 0
+    },
+    {
+      _id: '2',
+      subject: { name: 'Algorithms', code: 'CS202' },
+      date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      start_time: '11:00',
+      end_time: '12:30',
+      location: { name: 'Lab 2', building: 'CS Building' },
+      status: 'scheduled',
+      total_students: 42,
+      present_count: 0
+    },
+    {
+      _id: '3',
+      subject: { name: 'Database Systems', code: 'CS301' },
+      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      start_time: '14:00',
+      end_time: '15:30',
+      location: { name: 'Room 205', building: 'Main Building' },
+      status: 'completed',
+      total_students: 48,
+      present_count: 42
+    },
+    {
+      _id: '4',
+      subject: { name: 'Data Structures', code: 'CS201' },
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      start_time: '09:00',
+      end_time: '10:30',
+      location: { name: 'Room 101', building: 'Main Building' },
+      status: 'completed',
+      total_students: 45,
+      present_count: 38
     }
-  };
+  ];
+
+  const mockSubjects = [
+    { _id: '1', name: 'Data Structures', code: 'CS201' },
+    { _id: '2', name: 'Algorithms', code: 'CS202' },
+    { _id: '3', name: 'Database Systems', code: 'CS301' }
+  ];
+
+  const [sessions] = useState(mockSessions);
+  const subjects = mockSubjects;
 
   const filteredSessions = sessions.filter(session => {
-    const matchesSearch = session.session_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         session.subject_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = session.subject?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         session.subject?.code?.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
@@ -62,7 +91,7 @@ const Sessions = () => {
           // Handle date string like "2025-01-15"
           const dateObj = new Date(value + 'T00:00:00');
           return formatDate(dateObj, 'MMM dd, yyyy');
-        } catch (error) {
+        } catch {
           return value;
         }
       },
@@ -181,7 +210,6 @@ const Sessions = () => {
             <Table
               columns={columns}
               data={filteredSessions}
-              loading={loading}
               onRowClick={(row) => navigate(`/teacher/sessions/${row.id}`)}
               emptyMessage="No sessions found"
             />

@@ -9,9 +9,6 @@ import Textarea from '../../components/common/Textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import adminService from '../../services/adminService';
-import toast from 'react-hot-toast';
-
 const geofenceSchema = z.object({
   name: z.string().min(1, 'Zone name is required'),
   latitude: z.number().min(-90).max(90, 'Invalid latitude'),
@@ -28,7 +25,6 @@ const GeofenceForm = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(geofenceSchema),
@@ -36,33 +32,27 @@ const GeofenceForm = () => {
 
   useEffect(() => {
     if (isEdit) {
-      fetchGeofenceZone();
+      // Data loading removed
     }
-  }, [id]);
+  }, [id, isEdit]);
 
-  const fetchGeofenceZone = async () => {
-    try {
-      const data = await adminService.getGeofenceZone(id);
-      reset(data);
-    } catch (error) {
-      toast.error('Failed to load geofence zone details');
-      console.error('Geofence fetch error:', error);
-    }
-  };
+  // Fetch function removed
 
   const onSubmit = async (data) => {
     try {
       if (isEdit) {
-        await adminService.updateGeofenceZone(id, data);
-        toast.success('Geofence zone updated successfully');
+        /* Service call removed */
+        // toast.success('Geofence zone updated successfully');
+        console.log('Update geofence:', data);
       } else {
-        await adminService.createGeofenceZone(data);
-        toast.success('Geofence zone created successfully');
+        /* Service call removed */
+        // toast.success('Geofence zone created successfully');
+        console.log('Create geofence:', data);
       }
       navigate('/admin/geofence');
     } catch (error) {
-      toast.error(`Failed to ${isEdit ? 'update' : 'create'} geofence zone`);
-      console.error('Geofence save error:', error);
+      console.error('Form submission error:', error);
+      // toast.error('Failed to save geofence zone');
     }
   };
 

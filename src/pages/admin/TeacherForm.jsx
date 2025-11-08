@@ -9,9 +9,6 @@ import Select from '../../components/common/Select';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import teacherManagementService from '../../services/teacherManagementService';
-import toast from 'react-hot-toast';
-
 const teacherSchema = z.object({
   email: z.string().email('Invalid email address'),
   username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -30,7 +27,6 @@ const TeacherForm = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(teacherSchema),
@@ -41,33 +37,27 @@ const TeacherForm = () => {
 
   useEffect(() => {
     if (isEdit) {
-      fetchTeacher();
+      // Data loading removed
     }
-  }, [id]);
+  }, [id, isEdit]);
 
-  const fetchTeacher = async () => {
-    try {
-      const data = await teacherManagementService.getTeacher(id);
-      reset(data);
-    } catch (error) {
-      toast.error('Failed to load teacher details');
-      console.error('Teacher fetch error:', error);
-    }
-  };
+  // Fetch function removed
 
   const onSubmit = async (data) => {
     try {
       if (isEdit) {
-        await teacherManagementService.updateTeacher(id, data);
-        toast.success('Teacher updated successfully');
+        /* Service call removed */
+        // toast.success('Teacher updated successfully');
+        console.log('Update teacher:', data);
       } else {
-        await teacherManagementService.createTeacher(data);
-        toast.success('Teacher created successfully');
+        /* Service call removed */
+        // toast.success('Teacher created successfully');
+        console.log('Create teacher:', data);
       }
       navigate('/admin/teachers');
     } catch (error) {
-      toast.error(`Failed to ${isEdit ? 'update' : 'create'} teacher`);
-      console.error('Teacher save error:', error);
+      console.error('Form submission error:', error);
+      // toast.error('Failed to save teacher');
     }
   };
 

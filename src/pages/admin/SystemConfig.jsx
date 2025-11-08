@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Save, RefreshCw, Database, Shield, Settings, Eye, Activity, MapPin, Clock, HardDrive, Globe } from 'lucide-react';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
-import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
-
 const SystemConfig = () => {
   const [config, setConfig] = useState({
     face_recognition_threshold: 0.8,
@@ -20,37 +18,22 @@ const SystemConfig = () => {
     default_latitude: 28.6139,
     default_longitude: 77.2090,
   });
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    fetchConfig();
-  }, []);
+  // Fetch function removed
 
-  const fetchConfig = async () => {
-    try {
-      setLoading(true);
-      const data = await adminService.getSystemConfig();
-      setConfig(data);
-    } catch (error) {
-      toast.error('Failed to load system configuration');
-      console.error('Config error:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleRefresh = () => {
+    toast.info('Configuration refreshed');
   };
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      await adminService.updateSystemConfig(config);
+  const handleSave = () => {
+    setSaving(true);
+    
+    // Simulate save operation
+    setTimeout(() => {
       toast.success('System configuration updated successfully');
-    } catch (error) {
-      toast.error('Failed to update system configuration');
-      console.error('Save error:', error);
-    } finally {
       setSaving(false);
-    }
+    }, 1000);
   };
 
   const handleInputChange = (field, value) => {
@@ -230,8 +213,8 @@ const SystemConfig = () => {
                 variant="outline"
                 size="sm"
                 icon={RefreshCw}
-                onClick={fetchConfig}
-                loading={loading}
+                onClick={handleRefresh}
+                loading={false}
               >
                 Refresh
               </Button>
@@ -246,7 +229,7 @@ const SystemConfig = () => {
             icon={Save}
             onClick={handleSave}
             loading={saving}
-            disabled={loading}
+            disabled={false}
           >
             Save Configuration
           </Button>

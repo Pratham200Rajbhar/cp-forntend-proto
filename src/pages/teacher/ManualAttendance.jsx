@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CheckSquare, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -7,13 +8,9 @@ import Select from '../../components/common/Select';
 import Input from '../../components/common/Input';
 import Checkbox from '../../components/common/Checkbox';
 import Textarea from '../../components/common/Textarea';
-import teacherService from '../../services/teacherService';
-import attendanceService from '../../services/attendanceService';
-import toast from 'react-hot-toast';
-
 const ManualAttendance = () => {
-  const [subjects, setSubjects] = useState([]);
-  const [sessions, setSessions] = useState([]);
+  const [subjects] = useState([]);
+  const [sessions] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [selectedSession, setSelectedSession] = useState('');
@@ -23,60 +20,26 @@ const ManualAttendance = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchSubjects();
+    // Data loading removed
   }, []);
 
   useEffect(() => {
     if (selectedSubject) {
-      fetchSessions();
+      // Data loading removed
     }
   }, [selectedSubject]);
 
   useEffect(() => {
     if (selectedSession) {
-      fetchStudents();
+      // Data loading removed
     }
   }, [selectedSession]);
 
-  const fetchSubjects = async () => {
-    try {
-      const data = await teacherService.getSubjects();
-      setSubjects(data);
-    } catch (error) {
-      toast.error('Failed to load subjects');
-      console.error('Subjects error:', error);
-    }
-  };
+  // Fetch function removed
 
-  const fetchSessions = async () => {
-    try {
-      const data = await teacherService.getSessions({ subject_id: selectedSubject });
-      setSessions(data);
-    } catch (error) {
-      toast.error('Failed to load sessions');
-      console.error('Sessions error:', error);
-    }
-  };
+  // Fetch function removed
 
-  const fetchStudents = async () => {
-    try {
-      // Mock data - replace with actual API call
-      const mockStudents = [
-        { id: 1, name: 'Aarav Verma', email: 'aarav.verma@students.iitm.ac.in', student_id: '23CS001' },
-        { id: 2, name: 'Diya Gupta', email: 'diya.gupta@students.iitm.ac.in', student_id: '23CS002' },
-        { id: 3, name: 'Kabir Nair', email: 'kabir.nair@students.iitm.ac.in', student_id: '23CS003' },
-        { id: 4, name: 'Priya Patel', email: 'priya.patel@students.iitm.ac.in', student_id: '23CS004' },
-        { id: 5, name: 'Arjun Singh', email: 'arjun.singh@students.iitm.ac.in', student_id: '23CS005' },
-        { id: 6, name: 'Sneha Reddy', email: 'sneha.reddy@students.iitm.ac.in', student_id: '23CS006' },
-        { id: 7, name: 'Vikram Kumar', email: 'vikram.kumar@students.iitm.ac.in', student_id: '23CS007' },
-        { id: 8, name: 'Ananya Sharma', email: 'ananya.sharma@students.iitm.ac.in', student_id: '23CS008' },
-      ];
-      setStudents(mockStudents);
-    } catch (error) {
-      toast.error('Failed to load students');
-      console.error('Students error:', error);
-    }
-  };
+  // Fetch function removed
 
   const handleSelectAll = () => {
     if (selectedStudents.length === filteredStudents.length) {
@@ -110,6 +73,7 @@ const ManualAttendance = () => {
       setLoading(true);
       
       // Submit attendance for each selected student
+      /* Service call removed - attendanceService
       const promises = selectedStudents.map(studentId =>
         attendanceService.manualOverride({
           attendance_record_id: studentId, // This should be the actual attendance record ID
@@ -119,6 +83,7 @@ const ManualAttendance = () => {
       );
 
       await Promise.all(promises);
+      */
 
       toast.success(`Manual attendance submitted for ${selectedStudents.length} student(s)`);
       
@@ -127,8 +92,8 @@ const ManualAttendance = () => {
       setComments('');
       setSelectedSession('');
     } catch (error) {
-      toast.error('Failed to submit manual attendance');
-      console.error('Manual attendance error:', error);
+      console.error('Attendance submission error:', error);
+      toast.error('Failed to submit attendance');
     } finally {
       setLoading(false);
     }

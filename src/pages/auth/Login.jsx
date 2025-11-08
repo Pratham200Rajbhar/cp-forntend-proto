@@ -9,7 +9,6 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Checkbox from '../../components/common/Checkbox';
 import toast from 'react-hot-toast';
-
 // Validation schema
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -60,8 +59,8 @@ const Login = () => {
       } else {
         toast.error(result.error || 'Invalid credentials');
       }
-    } catch (error) {
-      toast.error('An error occurred during login');
+    } catch {
+      toast.error('Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

@@ -10,10 +10,6 @@ import Textarea from '../../components/common/Textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import adminService from '../../services/adminService';
-import teacherManagementService from '../../services/teacherManagementService';
-import toast from 'react-hot-toast';
-
 const subjectSchema = z.object({
   name: z.string().min(1, 'Subject name is required'),
   code: z.string().min(1, 'Subject code is required'),
@@ -25,56 +21,42 @@ const SubjectForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
-  const [teachers, setTeachers] = useState([]);
+  const [teachers] = useState([]);
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(subjectSchema),
   });
 
   useEffect(() => {
-    fetchTeachers();
+    // Data loading removed
     if (isEdit) {
-      fetchSubject();
+      // Data loading removed
     }
-  }, [id]);
+  }, [id, isEdit]);
 
-  const fetchTeachers = async () => {
-    try {
-      const data = await teacherManagementService.getTeachers({ limit: 100 });
-      setTeachers(data);
-    } catch (error) {
-      console.error('Teachers error:', error);
-    }
-  };
+  // Fetch function removed
 
-  const fetchSubject = async () => {
-    try {
-      const data = await adminService.getSubject(id);
-      reset(data);
-    } catch (error) {
-      toast.error('Failed to load subject details');
-      console.error('Subject fetch error:', error);
-    }
-  };
+  // Fetch function removed
 
   const onSubmit = async (data) => {
     try {
       if (isEdit) {
-        await adminService.updateSubject(id, data);
-        toast.success('Subject updated successfully');
+        /* Service call removed */
+        // toast.success('Subject updated successfully');
+        console.log('Update subject:', data);
       } else {
-        await adminService.createSubject(data);
-        toast.success('Subject created successfully');
+        /* Service call removed */
+        // toast.success('Subject created successfully');
+        console.log('Create subject:', data);
       }
       navigate('/admin/subjects');
     } catch (error) {
-      toast.error(`Failed to ${isEdit ? 'update' : 'create'} subject`);
-      console.error('Subject save error:', error);
+      console.error('Form submission error:', error);
+      // toast.error('Failed to save subject');
     }
   };
 

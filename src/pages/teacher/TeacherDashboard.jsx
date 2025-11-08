@@ -14,33 +14,87 @@ import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/C
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
-import teacherService from '../../services/teacherService';
 import { formatRelativeTime } from '../../utils/helpers';
 import { STATUS_COLORS } from '../../utils/constants';
-import toast from 'react-hot-toast';
-import { ProgressChart, StatsGrid, DonutChart, SimpleLineChart } from '../../components/common/Chart';
+import { ProgressChart, StatsGrid, SimpleLineChart } from '../../components/common/Chart';
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Using mock data
+
+  // Mock data - Dashboard API not documented in API_DOCUMENTATION.md
+  const dashboardData = {
+    today_sessions: 3,
+    total_students: 45,
+    flagged_attendance: 2,
+    pending_reviews: 1,
+    subject_performance: [
+      { label: 'Data Structures', value: 85 },
+      { label: 'Algorithms', value: 92 },
+      { label: 'Database Systems', value: 78 }
+    ],
+    quick_stats: {
+      this_week: '87%',
+      this_month: '84%',
+      total_classes: '24',
+      avg_students: '28'
+    },
+    weekly_attendance: [82, 88, 76, 91, 85, 93, 87],
+    today_schedule: [
+      {
+        id: 1,
+        subject: 'Algorithms',
+        session: 'Lecture: Graph Algorithms',
+        time: '09:30 AM - 10:45 AM',
+        room: 'CS Block 204',
+        status: 'completed',
+        attendance: '83%'
+      },
+      {
+        id: 2,
+        subject: 'Data Structures',
+        session: 'Lab: Binary Trees Implementation',
+        time: '02:00 PM - 04:00 PM',
+        room: 'Lab L2',
+        status: 'ongoing',
+        attendance: '71%'
+      },
+      {
+        id: 3,
+        subject: 'Database Systems',
+        session: 'Tutorial: SQL Optimization',
+        time: '04:30 PM - 05:30 PM',
+        room: 'IT Block 101',
+        status: 'upcoming',
+        attendance: null
+      }
+    ],
+    recent_activity: [
+      {
+        student_name: 'Aarav Verma',
+        session_name: 'Data Structures Lab',
+        status: 'present',
+        timestamp: new Date(Date.now() - 1800000).toISOString()
+      },
+      {
+        student_name: 'Diya Gupta',
+        session_name: 'Algorithms Lecture',
+        status: 'present',
+        timestamp: new Date(Date.now() - 3600000).toISOString()
+      },
+      {
+        student_name: 'Kabir Nair',
+        session_name: 'Database Tutorial',
+        status: 'suspicious',
+        timestamp: new Date(Date.now() - 5400000).toISOString()
+      }
+    ]
+  };
 
   useEffect(() => {
-    fetchDashboardData();
+    // Mock data - no API call needed
+    setLoading(false);
   }, []);
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const data = await teacherService.getDashboard();
-      setDashboardData(data);
-    } catch (error) {
-      toast.error('Failed to load dashboard data');
-      console.error('Dashboard error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -235,39 +289,13 @@ const TeacherDashboard = () => {
               </div>
             </CardHeader>
             <CardBody>
-              {dashboardData?.today_sessions > 0 ? (
+              {dashboardData?.today_sessions > 0 && dashboardData?.today_schedule ? (
                 <div className="space-y-3">
-                  {/* Today's actual sessions from mock data */}
-                  {[
-                    {
-                      subject: 'Algorithms',
-                      session: 'Lecture: Graph Algorithms',
-                      time: '09:30 AM - 10:45 AM',
-                      room: 'CS Block 204',
-                      status: 'completed',
-                      attendance: '83%'
-                    },
-                    {
-                      subject: 'Data Structures',
-                      session: 'Lab: Binary Trees Implementation',
-                      time: '02:00 PM - 04:00 PM',
-                      room: 'Lab L2',
-                      status: 'completed',
-                      attendance: '71%'
-                    },
-                    {
-                      subject: 'Database Systems',
-                      session: 'Tutorial: SQL Optimization',
-                      time: '04:30 PM - 05:30 PM',
-                      room: 'IT Block 101',
-                      status: 'completed',
-                      attendance: '75%'
-                    }
-                  ].map((session, index) => (
+                  {dashboardData.today_schedule.map((session, index) => (
                     <div
-                      key={index}
+                      key={session.id || index}
                       className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors"
-                      onClick={() => navigate('/teacher/sessions')}
+                      onClick={() => navigate(`/teacher/session-details/${session.id}`)}
                     >
                       <div className="flex items-center gap-3">
                         <div className="h-9 w-9 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
@@ -275,13 +303,13 @@ const TeacherDashboard = () => {
                         </div>
                         <div>
                           <p className="font-medium text-sm text-gray-900 dark:text-white">
-                            {session.subject}
+                            {session.subject_name || session.subject}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {session.session}
+                            {session.session_name || session.session}
                           </p>
                           <p className="text-xs text-gray-400 dark:text-gray-500">
-                            {session.time} • {session.room}
+                            {session.time} {session.room ? `• ${session.room}` : ''}
                           </p>
                         </div>
                       </div>
@@ -289,9 +317,11 @@ const TeacherDashboard = () => {
                         <Badge variant={session.status === 'completed' ? 'success' : 'warning'} size="sm">
                           {session.status}
                         </Badge>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {session.attendance} attendance
-                        </p>
+                        {session.attendance && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {session.attendance} attendance
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}

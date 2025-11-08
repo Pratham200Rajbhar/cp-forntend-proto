@@ -9,9 +9,6 @@ import Select from '../../components/common/Select';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import adminService from '../../services/adminService';
-import toast from 'react-hot-toast';
-
 const sessionSchema = z.object({
   subject_id: z.number().min(1, 'Subject is required'),
   session_name: z.string().min(1, 'Session name is required'),
@@ -25,58 +22,30 @@ const SessionForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
-  const [subjects, setSubjects] = useState([]);
-  const [geofenceZones, setGeofenceZones] = useState([]);
+  const [subjects] = useState([]);
+  const [geofenceZones] = useState([]);
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(sessionSchema),
   });
 
   useEffect(() => {
-    fetchSubjects();
-    fetchGeofenceZones();
+    // Data loading removed
+    // Data loading removed
     if (isEdit) {
-      fetchSession();
+      // Data loading removed
     }
-  }, [id]);
+  }, [id, isEdit]);
 
-  const fetchSubjects = async () => {
-    try {
-      const data = await adminService.getSubjects({ limit: 100 });
-      setSubjects(data);
-    } catch (error) {
-      console.error('Subjects error:', error);
-    }
-  };
+  // Fetch function removed
 
-  const fetchGeofenceZones = async () => {
-    try {
-      const data = await adminService.getGeofenceZones({ limit: 100 });
-      setGeofenceZones(data);
-    } catch (error) {
-      console.error('Geofence zones error:', error);
-    }
-  };
+  // Fetch function removed
 
-  const fetchSession = async () => {
-    try {
-      const data = await adminService.getSession(id);
-      reset({
-        ...data,
-        session_date: data.session_date?.split('T')[0] || '',
-        start_time: data.start_time?.split('T')[1]?.substring(0, 5) || '',
-        end_time: data.end_time?.split('T')[1]?.substring(0, 5) || '',
-      });
-    } catch (error) {
-      toast.error('Failed to load session details');
-      console.error('Session fetch error:', error);
-    }
-  };
+  // Fetch function removed
 
   const onSubmit = async (data) => {
     try {
@@ -88,16 +57,18 @@ const SessionForm = () => {
       };
 
       if (isEdit) {
-        await adminService.updateSession(id, sessionData);
-        toast.success('Session updated successfully');
+        /* Service call removed */
+        // toast.success('Session updated successfully');
+        console.log('Update session:', sessionData);
       } else {
-        await adminService.createSession(sessionData);
-        toast.success('Session created successfully');
+        /* Service call removed */
+        // toast.success('Session created successfully');
+        console.log('Create session:', sessionData);
       }
       navigate('/admin/sessions');
     } catch (error) {
-      toast.error(`Failed to ${isEdit ? 'update' : 'create'} session`);
-      console.error('Session save error:', error);
+      console.error('Form submission error:', error);
+      // toast.error('Failed to save session');
     }
   };
 

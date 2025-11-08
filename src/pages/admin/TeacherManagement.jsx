@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlus, Search, Edit, Trash2, BookOpen, Mail, Phone } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Table from '../../components/common/Table';
@@ -8,9 +9,8 @@ import Button from '../../components/common/Button';
 import Input from '../../components/common/Input';
 import Select from '../../components/common/Select';
 import Badge from '../../components/common/Badge';
-import teacherManagementService from '../../services/teacherManagementService';
 import { formatDate } from '../../utils/helpers';
-import toast from 'react-hot-toast';
+import { teacherService } from '../../services/api';
 
 const TeacherManagement = () => {
   const navigate = useNavigate();
@@ -21,19 +21,16 @@ const TeacherManagement = () => {
 
   useEffect(() => {
     fetchTeachers();
-  }, [selectedDepartment]);
+  }, []);
 
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const data = await teacherManagementService.getTeachers({ 
-        department: selectedDepartment || undefined,
-        limit: 100 
-      });
+      const data = await teacherService.getAll();
       setTeachers(data);
     } catch (error) {
+      console.error('Failed to fetch teachers:', error);
       toast.error('Failed to load teachers');
-      console.error('Teachers error:', error);
     } finally {
       setLoading(false);
     }
@@ -43,12 +40,11 @@ const TeacherManagement = () => {
     if (!confirm('Are you sure you want to delete this teacher?')) return;
 
     try {
-      await teacherManagementService.deleteTeacher(teacherId);
+      await teacherService.delete(teacherId);
       toast.success('Teacher deleted successfully');
       fetchTeachers();
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete teacher');
-      console.error('Delete error:', error);
     }
   };
 

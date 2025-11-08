@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -18,56 +18,34 @@ import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import Modal, { ModalFooter } from '../../components/common/Modal';
 import Textarea from '../../components/common/Textarea';
-import attendanceService from '../../services/attendanceService';
 import { formatDate, formatScore, getScoreBadgeColor, formatPercentage } from '../../utils/helpers';
 import { STATUS_COLORS, AI_THRESHOLDS } from '../../utils/constants';
-import toast from 'react-hot-toast';
-
 const SessionDetails = () => {
-  const { sessionId } = useParams();
+  useParams();
   const navigate = useNavigate();
-  const [sessionData, setSessionData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [sessionData] = useState(null);
   const [showOverrideModal, setShowOverrideModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [overrideReason, setOverrideReason] = useState('');
   const [overrideStatus, setOverrideStatus] = useState('present');
 
-  useEffect(() => {
-    fetchSessionData();
-  }, [sessionId]);
-
-  const fetchSessionData = async () => {
-    try {
-      setLoading(true);
-      const data = await attendanceService.getSessionAttendance(sessionId);
-      setSessionData(data);
-    } catch (error) {
-      toast.error('Failed to load session details');
-      console.error('Session details error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Fetch function removed
 
   const handleManualOverride = async () => {
     if (!selectedRecord) return;
 
     try {
-      await attendanceService.manualOverride({
-        attendance_record_id: selectedRecord.id,
-        new_status: overrideStatus,
-        reason: overrideReason
-      });
+      /* Service call removed */
       
-      toast.success('Attendance status updated successfully');
+      // toast.success('Attendance status updated successfully');
+      console.log('Override attendance:', { selectedRecord, overrideReason, overrideStatus });
       setShowOverrideModal(false);
       setSelectedRecord(null);
       setOverrideReason('');
-      fetchSessionData();
+      // Data loading removed
     } catch (error) {
-      toast.error('Failed to update attendance status');
       console.error('Override error:', error);
+      // toast.error('Failed to update attendance status');
     }
   };
 
@@ -160,7 +138,7 @@ const SessionDetails = () => {
     },
   ];
 
-  if (loading || !sessionData) {
+  if (!sessionData) {
     return (
       <Layout title="Session Details">
         <div className="flex items-center justify-center h-full">

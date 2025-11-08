@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { FileText, Download, Calendar } from 'lucide-react';
+import { FileText, Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Layout from '../../components/layout/Layout';
 import Card, { CardHeader, CardBody, CardTitle } from '../../components/common/Card';
 import Button from '../../components/common/Button';
@@ -7,7 +8,6 @@ import Select from '../../components/common/Select';
 import Input from '../../components/common/Input';
 import Checkbox from '../../components/common/Checkbox';
 import Modal, { ModalFooter } from '../../components/common/Modal';
-import toast from 'react-hot-toast';
 
 const Reports = () => {
   const [reportType, setReportType] = useState('summary');
@@ -18,17 +18,19 @@ const Reports = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
 
+  const subjects = [
+    { id: 1, name: 'Data Structures' },
+    { id: 2, name: 'Algorithms' },
+    { id: 3, name: 'Database Systems' },
+    { id: 4, name: 'Operating Systems' },
+    { id: 5, name: 'Computer Networks' }
+  ];
+
   const reportTypes = [
     { value: 'summary', label: 'Summary Report' },
     { value: 'detailed', label: 'Detailed Report' },
     { value: 'student', label: 'Student-wise Report' },
     { value: 'subject', label: 'Subject-wise Report' },
-  ];
-
-  const mockSubjects = [
-    { id: 1, name: 'Data Structures' },
-    { id: 2, name: 'Algorithms' },
-    { id: 3, name: 'Database Systems' },
   ];
 
   const handleGenerate = async () => {
@@ -39,17 +41,26 @@ const Reports = () => {
 
     setGenerating(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setGenerating(false);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
       setShowPreview(true);
       toast.success('Report generated successfully');
-    }, 2000);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      toast.error('Failed to generate report');
+    } finally {
+      setGenerating(false);
+    }
   };
 
-  const handleExport = (format) => {
-    toast.success(`Exporting report as ${format.toUpperCase()}...`);
-    setShowPreview(false);
+  const handleExport = async (format) => {
+    try {
+      toast.success(`Exporting report as ${format.toUpperCase()}...`);
+      setShowPreview(false);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export report');
+    }
   };
 
   return (
@@ -70,78 +81,82 @@ const Reports = () => {
                 fullWidth
               />
 
-              {/* Date Range */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Start Date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  fullWidth
-                />
-                <Input
-                  label="End Date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  fullWidth
-                />
-              </div>
-
-              {/* Subject Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  Select Subjects
-                </label>
-                <div className="space-y-2 border border-gray-200 dark:border-gray-700 rounded-md p-4">
-                  {mockSubjects.map((subject) => (
-                    <Checkbox
-                      key={subject.id}
-                      label={subject.name}
-                      checked={selectedSubjects.includes(subject.id)}
-                      onChange={() => {
-                        setSelectedSubjects(prev =>
-                          prev.includes(subject.id)
-                            ? prev.filter(id => id !== subject.id)
-                            : [...prev, subject.id]
-                        );
-                      }}
-                    />
-                  ))}
+                {/* Date Range */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Start Date"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    fullWidth
+                  />
+                  <Input
+                    label="End Date"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    fullWidth
+                  />
                 </div>
-              </div>
 
-              {/* Options */}
-              <div className="space-y-2">
-                <Checkbox
-                  label="Include student details"
-                  checked={includeStudentDetails}
-                  onChange={(e) => setIncludeStudentDetails(e.target.checked)}
-                />
-                <Checkbox label="Include AI validation scores" defaultChecked />
-                <Checkbox label="Include geofence data" defaultChecked />
-              </div>
+                {/* Subject Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Select Subjects
+                  </label>
+                  {subjects.length > 0 ? (
+                    <div className="space-y-2 border border-gray-200 dark:border-gray-700 rounded-md p-4">
+                      {subjects.map((subject) => (
+                        <Checkbox
+                          key={subject.id}
+                          label={subject.name || subject.subject_name}
+                          checked={selectedSubjects.includes(subject.id)}
+                          onChange={() => {
+                            setSelectedSubjects(prev =>
+                              prev.includes(subject.id)
+                                ? prev.filter(id => id !== subject.id)
+                                : [...prev, subject.id]
+                            );
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 p-4 border border-gray-200 dark:border-gray-700 rounded-md">
+                      No subjects available
+                    </p>
+                  )}
+                </div>
 
-              {/* Generate Button */}
-              <div className="flex justify-end space-x-4">
-                <Button variant="outline" onClick={() => window.location.reload()}>
-                  Reset
-                </Button>
-                <Button
-                  variant="primary"
-                  icon={FileText}
-                  onClick={handleGenerate}
-                  loading={generating}
-                  disabled={generating}
-                >
-                  Generate Report
-                </Button>
+                {/* Options */}
+                <div className="space-y-2">
+                  <Checkbox
+                    label="Include student details"
+                    checked={includeStudentDetails}
+                    onChange={(e) => setIncludeStudentDetails(e.target.checked)}
+                  />
+                  <Checkbox label="Include AI validation scores" defaultChecked />
+                  <Checkbox label="Include geofence data" defaultChecked />
+                </div>
+
+                {/* Generate Button */}
+                <div className="flex justify-end space-x-4">
+                  <Button variant="outline" onClick={() => window.location.reload()}>
+                    Reset
+                  </Button>
+                  <Button
+                    variant="primary"
+                    icon={FileText}
+                    onClick={handleGenerate}
+                    loading={generating}
+                    disabled={generating}
+                  >
+                    Generate Report
+                  </Button>
               </div>
             </div>
           </CardBody>
-        </Card>
-
-        {/* Recent Reports */}
+        </Card>        {/* Recent Reports */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Reports</CardTitle>
